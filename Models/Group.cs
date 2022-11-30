@@ -14,12 +14,14 @@ namespace GroupSpace2022.Models
         public string Description { get; set; }
 
         [Display(Name = "Gestart")]
-        [DataType (DataType.Date)]
-        public DateTime Started { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime Started { get; set; } = DateTime.Now;
 
         [Display(Name = "Beëindigd")]
         [DataType(DataType.Date)]
-        public DateTime Ended { get; set; }
+        public DateTime Ended { get; set; } = DateTime.MaxValue;
+
+        public List<Message>? Messages { get; set; } = new List<Message>();
 
     }
 }

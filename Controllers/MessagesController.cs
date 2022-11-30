@@ -10,89 +10,90 @@ using GroupSpace2022.Models;
 
 namespace GroupSpace2022.Controllers
 {
-    public class GroupsController : Controller
+    public class MessagesController : Controller
     {
         private readonly GroupSpace2022Context _context;
 
-        public GroupsController(GroupSpace2022Context context)
+        public MessagesController(GroupSpace2022Context context)
         {
             _context = context;
         }
 
-        // GET: Groups
+        // GET: Messages
         public async Task<IActionResult> Index()
         {
-            List<Group> groepen = await _context.Group.
-                                    Where(  g => g.Started <= DateTime.Now 
-                                            && g.Ended > DateTime.Now)
-                                    .Include (g => g.Messages).ToListAsync();
-            return View(groepen);
+            var groupSpace2022Context = _context.Message.Include(m => m.Group);
+            return View(await groupSpace2022Context.ToListAsync());
         }
 
-        // GET: Groups/Details/5
+        // GET: Messages/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Message == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var message = await _context.Message
+                .Include(m => m.Group)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(message);
         }
 
-        // GET: Groups/Create
+        // GET: Messages/Create
         public IActionResult Create()
         {
+            ViewData["GroupId"] = new SelectList(_context.Group, "Id", "Name");
             return View();
         }
 
-        // POST: Groups/Create
+        // POST: Messages/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,Sent,GroupId")] Message message)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@group);
+                _context.Add(message);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            ViewData["GroupId"] = new SelectList(_context.Group, "Id", "Name", message.GroupId);
+            return View(message);
         }
 
-        // GET: Groups/Edit/5
+        // GET: Messages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Message == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
-            if (@group == null)
+            var message = await _context.Message.FindAsync(id);
+            if (message == null)
             {
                 return NotFound();
             }
-            return View(@group);
+            ViewData["GroupId"] = new SelectList(_context.Group, "Id", "Name", message.GroupId);
+            return View(message);
         }
 
-        // POST: Groups/Edit/5
+        // POST: Messages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Sent,GroupId")] Message message)
         {
-            if (id != @group.Id)
+            if (id != message.Id)
             {
                 return NotFound();
             }
@@ -101,12 +102,12 @@ namespace GroupSpace2022.Controllers
             {
                 try
                 {
-                    _context.Update(@group);
+                    _context.Update(message);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GroupExists(@group.Id))
+                    if (!MessageExists(message.Id))
                     {
                         return NotFound();
                     }
@@ -117,49 +118,51 @@ namespace GroupSpace2022.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            ViewData["GroupId"] = new SelectList(_context.Group, "Id", "Name", message.GroupId);
+            return View(message);
         }
 
-        // GET: Groups/Delete/5
+        // GET: Messages/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Message == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var message = await _context.Message
+                .Include(m => m.Group)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(message);
         }
 
-        // POST: Groups/Delete/5
+        // POST: Messages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Group == null)
+            if (_context.Message == null)
             {
-                return Problem("Entity set 'GroupSpace2022Context.Group'  is null.");
+                return Problem("Entity set 'GroupSpace2022Context.Message'  is null.");
             }
-            var @group = await _context.Group.FindAsync(id);
-            if (@group != null)
+            var message = await _context.Message.FindAsync(id);
+            if (message != null)
             {
-                _context.Group.Remove(@group);
+                _context.Message.Remove(message);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GroupExists(int id)
+        private bool MessageExists(int id)
         {
-          return _context.Group.Any(e => e.Id == id);
+          return _context.Message.Any(e => e.Id == id);
         }
     }
 }

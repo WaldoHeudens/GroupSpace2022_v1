@@ -1,0 +1,42 @@
+﻿@model GroupSpace2022.Models.Message
+
+@{
+    ViewData["Title"] = "Boodschap";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Boodschap</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Sent)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sent)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Group)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Group.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Wijzigen</a> |
+    <a asp-action="Index">Terug naar overzicht</a>
+</div>
