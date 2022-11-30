@@ -17,5 +17,9 @@ namespace GroupSpace2022.Data
         public DbSet<GroupSpace2022.Models.Group> Group { get; set; } = default!;
 
         public DbSet<GroupSpace2022.Models.Message> Message { get; set; }
+
+        public DbSet<GroupSpace2022.Models.Category> Category { get; set; }
+
+        public DbSet<GroupSpace2022.Models.Media> Media { get; set; }
     }
 }

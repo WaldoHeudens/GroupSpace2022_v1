@@ -1,22 +1,14 @@
-﻿@model IEnumerable<GroupSpace2022.Models.Group>
+﻿@model IEnumerable<GroupSpace2022.Models.Media>
 
 @{
-    ViewData["Title"] = "Groepen";
+    ViewData["Title"] = "Media-overzicht";
 }
 
-<h1>Lijst van groepen</h1>
+<h1>Gebruikte media</h1>
 
 <p>
-    <a asp-action="Create">Maak nieuwe groep</a>
+    <a asp-action="Create">Nieuw media-item maken</a>
 </p>
-
-<form method="get" asp-action="Index" asp-controller="Groups">
-    <p>
-        <input type="text" name="searchField" value=@ViewData["searchField"] />
-        <input type="submit" value"Selecteer" />
-    </p>
-</form>
-
 <table class="table">
     <thead>
         <tr>
@@ -27,10 +19,10 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Started)
+                @Html.DisplayNameFor(model => model.Added)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ended)
+                @Html.DisplayNameFor(model => model.Categories)
             </th>
             <th></th>
         </tr>
@@ -45,15 +37,18 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Started)
+                @Html.DisplayFor(modelItem => item.Added)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ended)
+                @foreach (var cat in item.Categories)
+                {
+                    <p>@cat.Name</p>
+                }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Wijzig</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Wijzigen</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijder</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>
             </td>
         </tr>
 }

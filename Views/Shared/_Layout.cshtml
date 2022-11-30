@@ -28,6 +28,17 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Mediabeheer</a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Media" asp-action="Index">Media</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">Categorieën</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

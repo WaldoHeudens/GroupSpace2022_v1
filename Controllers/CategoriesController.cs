@@ -10,95 +10,85 @@ using GroupSpace2022.Models;
 
 namespace GroupSpace2022.Controllers
 {
-    public class GroupsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly GroupSpace2022Context _context;
 
-        public GroupsController(GroupSpace2022Context context)
+        public CategoriesController(GroupSpace2022Context context)
         {
             _context = context;
         }
 
-        // GET: Groups
-        public async Task<IActionResult> Index(string searchField = " ")
+        // GET: Categories
+        public async Task<IActionResult> Index()
         {
-            List<Group> groepen = await _context.Group.
-                                    Where(  g => g.Started <= DateTime.Now 
-                                            && g.Ended > DateTime.Now
-                                            && ((g.Name.Contains(searchField) && g.Description.Contains(searchField)) || searchField != " "))
-                                    .Include (g => g.Messages).ToListAsync();
-            //if (searchField != " ")
-            //{
-            //    groepen = groepen.Where(g => g.Name.Contains(searchField) || g.Description.Contains(searchField)).ToList();
-            //}
-            ViewData["searchField"] = searchField;
-            return View(groepen);
+              return View(await _context.Category.ToListAsync());
         }
 
-        // GET: Groups/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var category = await _context.Category
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(category);
         }
 
-        // GET: Groups/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Groups/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@group);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(category);
         }
 
-        // GET: Groups/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
-            if (@group == null)
+            var category = await _context.Category.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            return View(@group);
+            return View(category);
         }
 
-        // POST: Groups/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
         {
-            if (id != @group.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
@@ -107,12 +97,12 @@ namespace GroupSpace2022.Controllers
             {
                 try
                 {
-                    _context.Update(@group);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GroupExists(@group.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -123,49 +113,49 @@ namespace GroupSpace2022.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(category);
         }
 
-        // GET: Groups/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var category = await _context.Category
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(category);
         }
 
-        // POST: Groups/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Group == null)
+            if (_context.Category == null)
             {
-                return Problem("Entity set 'GroupSpace2022Context.Group'  is null.");
+                return Problem("Entity set 'GroupSpace2022Context.Category'  is null.");
             }
-            var @group = await _context.Group.FindAsync(id);
-            if (@group != null)
+            var category = await _context.Category.FindAsync(id);
+            if (category != null)
             {
-                _context.Group.Remove(@group);
+                _context.Category.Remove(category);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GroupExists(int id)
+        private bool CategoryExists(int id)
         {
-          return _context.Group.Any(e => e.Id == id);
+          return _context.Category.Any(e => e.Id == id);
         }
     }
 }

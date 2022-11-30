@@ -10,95 +10,85 @@ using GroupSpace2022.Models;
 
 namespace GroupSpace2022.Controllers
 {
-    public class GroupsController : Controller
+    public class MediaController : Controller
     {
         private readonly GroupSpace2022Context _context;
 
-        public GroupsController(GroupSpace2022Context context)
+        public MediaController(GroupSpace2022Context context)
         {
             _context = context;
         }
 
-        // GET: Groups
-        public async Task<IActionResult> Index(string searchField = " ")
+        // GET: Media
+        public async Task<IActionResult> Index()
         {
-            List<Group> groepen = await _context.Group.
-                                    Where(  g => g.Started <= DateTime.Now 
-                                            && g.Ended > DateTime.Now
-                                            && ((g.Name.Contains(searchField) && g.Description.Contains(searchField)) || searchField != " "))
-                                    .Include (g => g.Messages).ToListAsync();
-            //if (searchField != " ")
-            //{
-            //    groepen = groepen.Where(g => g.Name.Contains(searchField) || g.Description.Contains(searchField)).ToList();
-            //}
-            ViewData["searchField"] = searchField;
-            return View(groepen);
+              return View(await _context.Media.Include(m => m.Categories).ToListAsync());
         }
 
-        // GET: Groups/Details/5
+        // GET: Media/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Media == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var media = await _context.Media
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (media == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(media);
         }
 
-        // GET: Groups/Create
+        // GET: Media/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Groups/Create
+        // POST: Media/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Added")] Media media)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@group);
+                _context.Add(media);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(media);
         }
 
-        // GET: Groups/Edit/5
+        // GET: Media/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Media == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
-            if (@group == null)
+            var media = await _context.Media.FindAsync(id);
+            if (media == null)
             {
                 return NotFound();
             }
-            return View(@group);
+            return View(media);
         }
 
-        // POST: Groups/Edit/5
+        // POST: Media/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Started,Ended")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Added")] Media media)
         {
-            if (id != @group.Id)
+            if (id != media.Id)
             {
                 return NotFound();
             }
@@ -107,12 +97,12 @@ namespace GroupSpace2022.Controllers
             {
                 try
                 {
-                    _context.Update(@group);
+                    _context.Update(media);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GroupExists(@group.Id))
+                    if (!MediaExists(media.Id))
                     {
                         return NotFound();
                     }
@@ -123,49 +113,49 @@ namespace GroupSpace2022.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(media);
         }
 
-        // GET: Groups/Delete/5
+        // GET: Media/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _context.Media == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var media = await _context.Media
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            if (media == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(media);
         }
 
-        // POST: Groups/Delete/5
+        // POST: Media/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Group == null)
+            if (_context.Media == null)
             {
-                return Problem("Entity set 'GroupSpace2022Context.Group'  is null.");
+                return Problem("Entity set 'GroupSpace2022Context.Media'  is null.");
             }
-            var @group = await _context.Group.FindAsync(id);
-            if (@group != null)
+            var media = await _context.Media.FindAsync(id);
+            if (media != null)
             {
-                _context.Group.Remove(@group);
+                _context.Media.Remove(media);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GroupExists(int id)
+        private bool MediaExists(int id)
         {
-          return _context.Group.Any(e => e.Id == id);
+          return _context.Media.Any(e => e.Id == id);
         }
     }
 }

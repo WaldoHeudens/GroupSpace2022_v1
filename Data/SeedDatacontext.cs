@@ -28,6 +28,23 @@ namespace GroupSpace2022.Data
                         new Message { Title = "-", Content = "-", GroupId = dummy.Id + 1});
                     context.SaveChanges();
                 }
+
+
+                if (!context.Category.Any())
+                {
+                    Category dummy = new Category { Name = "?", Description = "?" };
+                    context.Category.Add(dummy);
+                    context.SaveChanges();
+                }
+
+                if (!context.Media.Any())
+                {
+                    List<Category> DummyCategories = new List<Category>();
+                    DummyCategories.Add(context.Category.Where(c => c.Name == "?").First());
+                    context.Media.AddRange(
+                        new Media { Name = "?", Description = "?", Categories = DummyCategories });
+                    context.SaveChanges();
+                }
             }
         }
     }
