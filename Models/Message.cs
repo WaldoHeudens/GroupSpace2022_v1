@@ -25,6 +25,9 @@ namespace GroupSpace2022.Models
         public int GroupId { get; set; }
 
         [Display(Name = "Groep")]
-        public Group? Group { get; set; }   
+        public Group? Group { get; set; }
+
+        public DateTime Deleted { get; set; } = DateTime.MaxValue;
+
     }
 }

@@ -25,5 +25,7 @@ namespace GroupSpace2022.Models
         public List<int>? CategoryIds { get; set; }
 
         public List<Category>? Categories { get; set; }
+
+        public DateTime Deleted { get; set; } = DateTime.MaxValue;
     }
 }

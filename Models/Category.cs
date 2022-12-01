@@ -16,5 +16,7 @@ namespace GroupSpace2022.Models
 
         [Display(Name = "Media")]
         public List<Media>? Medias { get; set; }
+
+        public DateTime Deleted { get; set; } = DateTime.MaxValue;
     }
 }

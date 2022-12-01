@@ -24,6 +24,7 @@ namespace GroupSpace2022.Controllers
         {
             List<Group> groepen = await _context.Group.
                                     Where(  g => g.Started <= DateTime.Now 
+                                            && g.Deleted > DateTime.Now
                                             && g.Ended > DateTime.Now
                                             && ((g.Name.Contains(searchField) && g.Description.Contains(searchField)) || searchField != " "))
                                     .Include (g => g.Messages).ToListAsync();
@@ -156,7 +157,8 @@ namespace GroupSpace2022.Controllers
             var @group = await _context.Group.FindAsync(id);
             if (@group != null)
             {
-                _context.Group.Remove(@group);
+                @group.Deleted = DateTime.Now;
+                _context.Group.Update(@group);
             }
             
             await _context.SaveChangesAsync();

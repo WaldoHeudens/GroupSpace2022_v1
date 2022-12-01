@@ -22,7 +22,7 @@ namespace GroupSpace2022.Controllers
         // GET: Messages
         public async Task<IActionResult> Index()
         {
-            var groupSpace2022Context = _context.Message.Include(m => m.Group);
+            var groupSpace2022Context = _context.Message.Where(m => m.Deleted > DateTime.Now).Include(m => m.Group);
             return View(await groupSpace2022Context.ToListAsync());
         }
 
@@ -153,7 +153,8 @@ namespace GroupSpace2022.Controllers
             var message = await _context.Message.FindAsync(id);
             if (message != null)
             {
-                _context.Message.Remove(message);
+                message.Deleted = DateTime.Now;
+                _context.Message.Update(message);
             }
             
             await _context.SaveChangesAsync();

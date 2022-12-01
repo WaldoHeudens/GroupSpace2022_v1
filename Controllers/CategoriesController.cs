@@ -22,7 +22,7 @@ namespace GroupSpace2022.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Category.ToListAsync());
+              return View(await _context.Category.Where(c => c.Deleted > DateTime.Now).ToListAsync());
         }
 
         // GET: Categories/Details/5
@@ -146,7 +146,8 @@ namespace GroupSpace2022.Controllers
             var category = await _context.Category.FindAsync(id);
             if (category != null)
             {
-                _context.Category.Remove(category);
+                category.Deleted = DateTime.Now;
+                _context.Category.Update(category);
             }
             
             await _context.SaveChangesAsync();

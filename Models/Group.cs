@@ -23,5 +23,7 @@ namespace GroupSpace2022.Models
 
         public List<Message>? Messages { get; set; } = new List<Message>();
 
+        public DateTime Deleted { get; set; } = DateTime.MaxValue;
+
     }
 }

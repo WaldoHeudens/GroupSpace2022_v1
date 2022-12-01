@@ -22,7 +22,7 @@ namespace GroupSpace2022.Controllers
         // GET: Media
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Media.Include(m => m.Categories).ToListAsync());
+              return View(await _context.Media.Where(m => m.Deleted > DateTime.Now).Include(m => m.Categories).ToListAsync());
         }
 
         // GET: Media/Details/5
@@ -46,7 +46,9 @@ namespace GroupSpace2022.Controllers
         // GET: Media/Create
         public IActionResult Create()
         {
-            return View();
+            ViewData["CategoryIds"] = new MultiSelectList(_context.Category.OrderBy(c => c.Name), "Id", "Name");
+            Media media = new Media();
+            return View(media);
         }
 
         // POST: Media/Create
@@ -54,14 +56,21 @@ namespace GroupSpace2022.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Added")] Media media)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Added, CategoryIds")] Media media)
         {
             if (ModelState.IsValid)
             {
+                if (media.Categories == null)
+                    media.Categories = new List<Category>();
+                foreach (int id in media.CategoryIds)
+                {
+                    media.Categories.Add(_context.Category.FirstOrDefault(c => c.Id == id));
+                }
                 _context.Add(media);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryIds"] = new MultiSelectList(_context.Category.OrderBy(c => c.Name), "Id", "Name", media.CategoryIds);
             return View(media);
         }
 
@@ -73,7 +82,15 @@ namespace GroupSpace2022.Controllers
                 return NotFound();
             }
 
-            var media = await _context.Media.FindAsync(id);
+            var media = await _context.Media.Include(m => m.Categories).FirstAsync(m => m.Id==id);
+            //media.Categories = _context.Category.Include(c => c.Medias).Where(m => m.Medias.Contains(media)).ToList();
+            media.CategoryIds = new List<int>();
+            foreach(Category c in media.Categories)
+            {
+                media.CategoryIds.Add(c.Id);
+            }
+
+            ViewData["CategoryIds"] = new MultiSelectList(_context.Category.OrderBy(c => c.Name), "Id", "Name", media.CategoryIds); 
             if (media == null)
             {
                 return NotFound();
@@ -86,7 +103,7 @@ namespace GroupSpace2022.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Added")] Media media)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Added, CategoryIds")] Media media)
         {
             if (id != media.Id)
             {
@@ -97,7 +114,16 @@ namespace GroupSpace2022.Controllers
             {
                 try
                 {
-                    _context.Update(media);
+                    Media existingMedia = _context.Media.Include(m => m.Categories).First(m => m.Id==id);
+                    existingMedia.Name = media.Name;
+                    existingMedia.Description = media.Description;
+                    existingMedia.Categories.Clear();
+
+                    foreach (int catId in media.CategoryIds)
+                    {
+                        existingMedia.Categories.Add(_context.Category.FirstOrDefault(c => c.Id == catId));
+                    }
+                    _context.Update(existingMedia);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -113,6 +139,7 @@ namespace GroupSpace2022.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryIds"] = new MultiSelectList(_context.Category.OrderBy(c => c.Name), "Id", "Name", media.CategoryIds);
             return View(media);
         }
 
@@ -144,9 +171,10 @@ namespace GroupSpace2022.Controllers
                 return Problem("Entity set 'GroupSpace2022Context.Media'  is null.");
             }
             var media = await _context.Media.FindAsync(id);
+            media.Deleted = DateTime.Now;
             if (media != null)
             {
-                _context.Media.Remove(media);
+                _context.Media.Update(media);
             }
             
             await _context.SaveChangesAsync();
