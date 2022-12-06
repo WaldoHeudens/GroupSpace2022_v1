@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Manueel toegevoegd om te werken met Identity Framework
 var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
-// connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
+// var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
 
 builder.Services.AddDbContext<GroupSpace2022Context>(options =>
     options.UseSqlServer(connectionString ?? throw new InvalidOperationException("Connection string 'GroupSpace2022Context' not found.")));
@@ -18,7 +18,7 @@ builder.Services.AddDbContext<global::GroupSpace2022.Data.IdentityDbContext>((gl
     options.UseSqlServer(connectionString));
 
 
-builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignIn.RequireConfirmedAccount = false)
 // Manueel toegevoegd  om te werken met Identity Framework    
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>();
@@ -27,6 +27,26 @@ builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignI
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Password settings.
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+
+    // Lockout settings.
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+    // User settings.
+    options.User.AllowedUserNameCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = false;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
