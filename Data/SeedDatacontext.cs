@@ -1,17 +1,57 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Models;
+using Microsoft.AspNetCore.Identity;
+using GroupSpace2022.Areas.Identity.Data;
 
 namespace GroupSpace2022.Data
 {
     public class SeedDatacontext
     {
-        public static void Initialize(System.IServiceProvider serviceProvider)
+        public static void Initialize(System.IServiceProvider serviceProvider, UserManager<GroupSpace2022User> userManager)
         {
             using (var context = new GroupSpace2022Context(serviceProvider.GetRequiredService<DbContextOptions<GroupSpace2022Context>>()))
             {
                 context.Database.Migrate();
                 context.Database.EnsureCreated();   // Zorg dat de databank bestaat
 
+                if (!context.Roles.Any())
+                {
+           
+                    GroupSpace2022User dummy = new GroupSpace2022User     
+                        {
+                            Email = "?@?.?",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            UserName = "dummy"
+                        };
+                    GroupSpace2022User administrator = new GroupSpace2022User
+                    {
+                        Email = "admin@Groupspace2022.be",
+                        EmailConfirmed = true,
+                        LockoutEnabled = false,
+                        UserName = "Administrator"
+                    };
+
+                    userManager.CreateAsync(administrator, "Abc!12345");
+                    userManager.CreateAsync(dummy, "Abc!12345");
+
+                    context.Roles.AddRange
+                    (
+                       new IdentityRole { Id = "Beheerder", Name = "Beheerder", NormalizedName = "BEHEERDER" },
+                       new IdentityRole { Id = "Gebruiker", Name = "Gebruiker", NormalizedName = "GEBRUIKER"}
+                    );
+                    context.SaveChanges();
+                    Thread.Sleep( 1000 );
+                    string id = administrator.Id;
+
+                    context.UserRoles.AddRange
+                        (
+                            new IdentityUserRole<string> { RoleId = "Gebruiker", UserId = administrator.Id },
+                            new IdentityUserRole<string> { RoleId = "Beheerder", UserId = administrator.Id }
+                        );
+                    context.SaveChanges();
+
+                }
                 if (!context.Group.Any())           // Als er geen groepen aanwezig zijn => Voeg groepen toe
                 {
                     context.Group.AddRange(

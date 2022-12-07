@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GroupSpace2022.Migrations.IdentityDb
 {
-    [DbContext(typeof(IdentityDbContext))]
+    [DbContext(typeof(GroupSpace2022Context))]
     [Migration("20221206140257_Identity")]
     partial class Identity
     {

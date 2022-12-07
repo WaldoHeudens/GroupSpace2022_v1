@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
 using GroupSpace2022.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GroupSpace2022.Controllers
 {
+    [Authorize (Roles = "Gebruiker")]
     public class MessagesController : Controller
     {
         private readonly GroupSpace2022Context _context;

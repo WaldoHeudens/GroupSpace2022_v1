@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GroupSpace2022.Data;
 
-public class IdentityDbContext : IdentityDbContext<GroupSpace2022User>
+public class GroupSpace2022Context : IdentityDbContext<GroupSpace2022User>
 {
-    public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
+    public GroupSpace2022Context(DbContextOptions<GroupSpace2022Context> options)
         : base(options)
     {
     }
@@ -19,4 +19,13 @@ public class IdentityDbContext : IdentityDbContext<GroupSpace2022User>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
     }
+
+    public DbSet<GroupSpace2022.Models.Group> Group { get; set; } = default!;
+
+    public DbSet<GroupSpace2022.Models.Message> Message { get; set; }
+
+    public DbSet<GroupSpace2022.Models.Category> Category { get; set; }
+
+    public DbSet<GroupSpace2022.Models.Media> Media { get; set; }
+
 }

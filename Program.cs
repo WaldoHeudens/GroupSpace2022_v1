@@ -14,14 +14,14 @@ builder.Services.AddDbContext<GroupSpace2022Context>(options =>
     options.UseSqlServer(connectionString ?? throw new InvalidOperationException("Connection string 'GroupSpace2022Context' not found.")));
 
 // Manueel toegevoegd om te werken met Identity Framework
-builder.Services.AddDbContext<global::GroupSpace2022.Data.IdentityDbContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
+builder.Services.AddDbContext<global::GroupSpace2022.Data.GroupSpace2022Context>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
     options.UseSqlServer(connectionString));
 
 
 builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignIn.RequireConfirmedAccount = false)
 // Manueel toegevoegd  om te werken met Identity Framework    
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<IdentityDbContext>();
+    .AddEntityFrameworkStores<GroupSpace2022Context>();
 
 
 // Add services to the container.
@@ -57,7 +57,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthentication();;
+app.UseAuthentication();
 
 app.UseAuthorization();
 
@@ -68,7 +68,8 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    SeedDatacontext.Initialize(services);
+    var userManager = services.GetRequiredService<UserManager<GroupSpace2022User>>();
+    SeedDatacontext.Initialize(services, userManager);
 }
 
 // Manueel toegevoegd om te werken met Identity Framework
