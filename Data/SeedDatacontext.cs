@@ -2,12 +2,13 @@
 using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Identity;
 using GroupSpace2022.Areas.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GroupSpace2022.Data
 {
     public class SeedDatacontext
     {
-        public static void Initialize(System.IServiceProvider serviceProvider, UserManager<GroupSpace2022User> userManager)
+        public static async Task<IActionResult> Initialize(System.IServiceProvider serviceProvider, UserManager<GroupSpace2022User> userManager)
         {
             using (var context = new GroupSpace2022Context(serviceProvider.GetRequiredService<DbContextOptions<GroupSpace2022Context>>()))
             {
@@ -16,24 +17,28 @@ namespace GroupSpace2022.Data
 
                 if (!context.Roles.Any())
                 {
-           
-                    GroupSpace2022User dummy = new GroupSpace2022User     
-                        {
-                            Email = "?@?.?",
-                            EmailConfirmed = true,
-                            LockoutEnabled = true,
-                            UserName = "dummy"
+
+                    GroupSpace2022User dummy = new GroupSpace2022User
+                    {
+                        Email = "?@?.?",
+                        EmailConfirmed = true,
+                        LockoutEnabled = true,
+                        UserName = "dummy",
+                        FirstName = "?",
+                        LastName = "?"
                         };
                     GroupSpace2022User administrator = new GroupSpace2022User
                     {
                         Email = "admin@Groupspace2022.be",
                         EmailConfirmed = true,
                         LockoutEnabled = false,
-                        UserName = "Administrator"
+                        UserName = "Administrator",
+                        FirstName = "Administrator",
+                        LastName = "GroupSpace"
                     };
 
-                    userManager.CreateAsync(administrator, "Abc!12345");
-                    userManager.CreateAsync(dummy, "Abc!12345");
+                    await userManager.CreateAsync(administrator, "Abc!12345");
+                    await userManager.CreateAsync(dummy, "Abc!12345");
 
                     context.Roles.AddRange
                     (
@@ -41,7 +46,7 @@ namespace GroupSpace2022.Data
                        new IdentityRole { Id = "Gebruiker", Name = "Gebruiker", NormalizedName = "GEBRUIKER"}
                     );
                     context.SaveChanges();
-                    Thread.Sleep( 1000 );
+
                     string id = administrator.Id;
 
                     context.UserRoles.AddRange
@@ -62,10 +67,11 @@ namespace GroupSpace2022.Data
 
                 if (!context.Message.Any())
                 {
+                    GroupSpace2022User dummyUser = context.Users.FirstOrDefault(u => u.UserName == "dummy");
                     Group dummy = context.Group.Where(g => g.Name == "?").First();
                     context.Message.AddRange(
-                        new Message { Title = "-", Content = "-", GroupId = dummy.Id },
-                        new Message { Title = "-", Content = "-", GroupId = dummy.Id + 1});
+                        new Message { Title = "-", Content = "-", GroupId = dummy.Id, SenderId = dummyUser.Id },
+                        new Message { Title = "-", Content = "-", GroupId = dummy.Id + 1, SenderId = dummyUser.Id});
                     context.SaveChanges();
                 }
 
@@ -85,6 +91,8 @@ namespace GroupSpace2022.Data
                         new Media { Name = "?", Description = "?", Categories = DummyCategories });
                     context.SaveChanges();
                 }
+
+                return null;
             }
         }
     }

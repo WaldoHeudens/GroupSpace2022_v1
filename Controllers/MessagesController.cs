@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
 using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Authorization;
+using GroupSpace2022.Areas.Identity.Data;
 
 namespace GroupSpace2022.Controllers
 {
@@ -24,7 +25,8 @@ namespace GroupSpace2022.Controllers
         // GET: Messages
         public async Task<IActionResult> Index()
         {
-            var groupSpace2022Context = _context.Message.Where(m => m.Deleted > DateTime.Now).Include(m => m.Group);
+            GroupSpace2022User me = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var groupSpace2022Context = _context.Message.Where(m => m.Deleted > DateTime.Now & m.SenderId == me.Id).Include(m => m.Group).Include(u => u.Sender);
             return View(await groupSpace2022Context.ToListAsync());
         }
 
@@ -50,8 +52,11 @@ namespace GroupSpace2022.Controllers
         // GET: Messages/Create
         public IActionResult Create()
         {
+            GroupSpace2022User me = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
+            Message message = new Message() { SenderId = me.Id, Sent = DateTime.Now };
             ViewData["GroupId"] = new SelectList(_context.Group, "Id", "Name");
-            return View();
+            return View(message);
         }
 
         // POST: Messages/Create
@@ -59,7 +64,7 @@ namespace GroupSpace2022.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,Sent,GroupId")] Message message)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,Sent,GroupId, SenderId")] Message message)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +98,7 @@ namespace GroupSpace2022.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Sent,GroupId")] Message message)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Sent,GroupId, SenderId")] Message message)
         {
             if (id != message.Id)
             {

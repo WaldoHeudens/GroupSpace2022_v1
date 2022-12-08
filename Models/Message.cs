@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GroupSpace2022.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GroupSpace2022.Models
@@ -27,7 +28,13 @@ namespace GroupSpace2022.Models
         [Display(Name = "Groep")]
         public Group? Group { get; set; }
 
+        [ForeignKey("GroupSpace2022User")]
+        [Display (Name = "Verzonden door")]
+        public string SenderId { get; set; }
+
         public DateTime Deleted { get; set; } = DateTime.MaxValue;
+
+        public GroupSpace2022User? Sender { get; set; }
 
     }
 }

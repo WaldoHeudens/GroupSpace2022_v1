@@ -3,12 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 using GroupSpace2022.Data;
 using Microsoft.AspNetCore.Identity;
 using GroupSpace2022.Areas.Identity.Data;
+using GroupSpace2022.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Manueel toegevoegd om te werken met Identity Framework
-var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
-// var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
+//var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
+var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
 
 builder.Services.AddDbContext<GroupSpace2022Context>(options =>
     options.UseSqlServer(connectionString ?? throw new InvalidOperationException("Connection string 'GroupSpace2022Context' not found.")));
@@ -18,7 +21,7 @@ builder.Services.AddDbContext<global::GroupSpace2022.Data.GroupSpace2022Context>
     options.UseSqlServer(connectionString));
 
 
-builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignIn.RequireConfirmedAccount = true)
 // Manueel toegevoegd  om te werken met Identity Framework    
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GroupSpace2022Context>();
@@ -26,6 +29,20 @@ builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignI
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
+builder.Services.Configure<MailKitOptions>(options =>
+{
+    options.Server = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"];
+    options.Port = Convert.ToInt32(builder.Configuration["ExternalProviders:MailKit:SMTP:Port"]);
+    options.Account = builder.Configuration["ExternalProviders:MailKit:SMTP:Account"];
+    options.Password = builder.Configuration["ExternalProviders:MailKit:SMTP:Password"];
+    options.SenderEmail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
+    options.SenderName = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
+
+    // Set it to TRUE to enable ssl or tls, FALSE otherwise
+    options.Security = false;  // true zet ssl or tls aan
+});
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -69,7 +86,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<GroupSpace2022User>>();
-    SeedDatacontext.Initialize(services, userManager);
+    await SeedDatacontext.Initialize(services, userManager);
 }
 
 // Manueel toegevoegd om te werken met Identity Framework
