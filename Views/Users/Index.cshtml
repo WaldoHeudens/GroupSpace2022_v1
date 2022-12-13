@@ -48,12 +48,12 @@
                 <td>
                 @if (item.Deleted)
                 {
-                        <a asp-action="Undelete" asp-route-id="@item.Id">Toelaten</a>
+                        <a asp-action="Undelete" asp-route-userName="@item.UserName">Toelaten</a>
                 }
                 else
                 {
-                    <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a> + '|' 
-                    <a asp-action="Roles" asp-route-id="@item.Id">Rollen Aanpassen</a>
+                        <a asp-action="Delete" asp-route-userName="@item.UserName">Verwijderen | </a>
+                        <a asp-action="Roles" asp-route-userName="@item.UserName">Rollen Aanpassen</a>
                 }
             </td>
         </tr>
