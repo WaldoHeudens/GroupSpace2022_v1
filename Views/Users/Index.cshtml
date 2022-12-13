@@ -28,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
@@ -52,11 +52,11 @@
                 }
                 else
                 {
-                    <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>  | 
+                    <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a> + '|' 
                     <a asp-action="Roles" asp-route-id="@item.Id">Rollen Aanpassen</a>
                 }
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
