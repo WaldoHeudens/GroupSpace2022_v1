@@ -17,5 +17,8 @@ public class GroupSpace2022User : IdentityUser
     [Required]
     [Display(Name = "Familienaam")]
     public string LastName { get; set; } = "?";
+
+    [Display(Name = "Verwijderd")]
+    public DateTime Deleted { get; set; } = DateTime.MaxValue;
 }
 

@@ -25,7 +25,8 @@ namespace GroupSpace2022.Data
                         LockoutEnabled = true,
                         UserName = "dummy",
                         FirstName = "?",
-                        LastName = "?"
+                        LastName = "?",
+                        Deleted = DateTime.Now
                         };
                     GroupSpace2022User administrator = new GroupSpace2022User
                     {
