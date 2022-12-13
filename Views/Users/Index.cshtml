@@ -46,10 +46,16 @@
                     @Html.DisplayFor(modelItem => item.Roles)
                 </td>
                 <td>
- @*               <a asp-action="Edit" asp-route-id="@item.Id">Wijzigen</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>
-*@            </td>
+                @if (item.Deleted)
+                {
+                        <a asp-action="Undelete" asp-route-id="@item.Id">Toelaten</a>
+                }
+                else
+                {
+                    <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>  | 
+                    <a asp-action="Roles" asp-route-id="@item.Id">Rollen Aanpassen</a>
+                }
+            </td>
         </tr>
 }
     </tbody>

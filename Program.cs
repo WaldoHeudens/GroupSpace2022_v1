@@ -10,7 +10,7 @@ using NETCore.MailKit.Infrastructure.Internal;
 var builder = WebApplication.CreateBuilder(args);
 
 // Manueel toegevoegd om te werken met Identity Framework
-// var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
+//var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
 var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
 
 builder.Services.AddDbContext<GroupSpace2022Context>(options =>
