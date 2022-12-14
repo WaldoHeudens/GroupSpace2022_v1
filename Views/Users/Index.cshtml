@@ -26,6 +26,23 @@
             </th>
             <th></th>
         </tr>
+        <form method="get" asp-action="Index" asp-controller="Users">
+            <tr>
+                <th>
+                    <input type="text" name="userName" class="form-control" value=@ViewData["userName"] onchange="$(this.form).submit();" />
+                </th>
+                <th>
+                    <input type="text" name="firstName" class="form-control" value=@ViewData["firstName"] onchange="$(this.form).submit();" />
+                </th>
+                <th>
+                    <input type="text" name="lastName" class="form-control" value=@ViewData["lastName"] onchange="$(this.form).submit();" />
+                </th>
+                <th>
+                    <input type="text" name="email" class="form-control" value=@ViewData["email"] onchange="$(this.form).submit();" />
+                </th>
+            </tr>
+        </form>
+
     </thead>
     <tbody>
     @foreach (var item in Model) {
@@ -43,7 +60,10 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Roles)
+                    @foreach (string role in item.Roles)
+                    {
+                        <p>@role</p>   
+                    }
                 </td>
                 <td>
                 @if (item.Deleted)
@@ -53,7 +73,7 @@
                 else
                 {
                         <a asp-action="Delete" asp-route-userName="@item.UserName">Verwijderen | </a>
-                        <a asp-action="Roles" asp-route-userName="@item.UserName">Rollen Aanpassen</a>
+                        <a asp-action="Roles" asp-route-userName="@item.UserName">Rollen</a>
                 }
             </td>
         </tr>
