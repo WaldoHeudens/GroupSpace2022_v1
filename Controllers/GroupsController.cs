@@ -10,13 +10,12 @@ using GroupSpace2022.Models;
 
 namespace GroupSpace2022.Controllers
 {
-    public class GroupsController : Controller
+    public class GroupsController : GroupSpace2022Controller
     {
-        private readonly GroupSpace2022Context _context;
 
-        public GroupsController(GroupSpace2022Context context)
+        public GroupsController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+            : base(context, httpContextAccessor, logger)
         {
-            _context = context;
         }
 
         // GET: Groups

@@ -12,13 +12,12 @@ using Microsoft.EntityFrameworkCore;
 namespace GroupSpace2022.Controllers
 {
     [Authorize (Roles = "Beheerder")]
-    public class UsersController : Controller
+    public class UsersController : GroupSpace2022Controller
     {
-        private readonly GroupSpace2022Context _context;
 
-        public UsersController(GroupSpace2022Context context)
+        public UsersController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+            : base(context, httpContextAccessor, logger)
         {
-            _context = context;
         }
 
         public IActionResult Index(string userName, string firstName, string lastName, string email)

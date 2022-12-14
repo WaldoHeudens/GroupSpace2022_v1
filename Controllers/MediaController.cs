@@ -10,13 +10,12 @@ using GroupSpace2022.Models;
 
 namespace GroupSpace2022.Controllers
 {
-    public class MediaController : Controller
+    public class MediaController : GroupSpace2022Controller
     {
-        private readonly GroupSpace2022Context _context;
 
-        public MediaController(GroupSpace2022Context context)
+        public MediaController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+            : base(context, httpContextAccessor, logger)
         {
-            _context = context;
         }
 
         // GET: Media

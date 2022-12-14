@@ -1,16 +1,16 @@
-﻿using GroupSpace2022.Models;
+﻿using GroupSpace2022.Data;
+using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace GroupSpace2022.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : GroupSpace2022Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+            : base(context, httpContextAccessor, logger)
         {
-            _logger = logger;
         }
 
         public IActionResult Index()
