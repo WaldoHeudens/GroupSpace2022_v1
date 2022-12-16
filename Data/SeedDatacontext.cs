@@ -28,7 +28,7 @@ namespace GroupSpace2022.Data
                         LastName = "?",
                         Deleted = DateTime.Now
                         };
-                    GroupSpace2022User administrator = new GroupSpace2022User
+                    GroupSpace2022User admin = new GroupSpace2022User
                     {
                         Email = "admin@Groupspace2022.be",
                         EmailConfirmed = true,
@@ -38,41 +38,61 @@ namespace GroupSpace2022.Data
                         LastName = "GroupSpace"
                     };
 
-                    await userManager.CreateAsync(administrator, "Abc!12345");
+                    await userManager.CreateAsync(admin, "Abc!12345");
                     await userManager.CreateAsync(dummy, "Abc!12345");
 
                     context.Roles.AddRange
                     (
-                       new IdentityRole { Id = "Beheerder", Name = "Beheerder", NormalizedName = "BEHEERDER" },
-                       new IdentityRole { Id = "Gebruiker", Name = "Gebruiker", NormalizedName = "GEBRUIKER"}
+                       new IdentityRole { Id = "SystemAdministrator", Name = "SystemAdministrator", NormalizedName = "SYSTEMADMINISTRATOR" },
+                       new IdentityRole { Id = "UserAdministrator", Name = "UserAdministrator", NormalizedName = "USERADMINISTRATOR" },
+                       new IdentityRole { Id = "User", Name = "User", NormalizedName = "USER" }
                     );
                     context.SaveChanges();
 
-                    string id = administrator.Id;
+                    string id = admin.Id;
 
                     context.UserRoles.AddRange
                         (
-                            new IdentityUserRole<string> { RoleId = "Gebruiker", UserId = administrator.Id },
-                            new IdentityUserRole<string> { RoleId = "Beheerder", UserId = administrator.Id }
+                            new IdentityUserRole<string> { RoleId = "User", UserId = admin.Id },
+                            new IdentityUserRole<string> { RoleId = "UserAdministrator", UserId = admin.Id },
+                            new IdentityUserRole<string> { RoleId = "SystemAdministrator", UserId = admin.Id }
                         );
                     context.SaveChanges();
 
                 }
+                GroupSpace2022User dummyUser = context.Users.FirstOrDefault(u => u.UserName == "dummy");
+                GroupSpace2022User administrator = context.Users.FirstOrDefault(u => u.UserName == "Administrator");
+
                 if (!context.Group.Any())           // Als er geen groepen aanwezig zijn => Voeg groepen toe
                 {
                     context.Group.AddRange(
-                        new Group { Name = "?", Description = "?", Started = DateTime.MinValue, Ended = DateTime.Now},
-                        new Group { Name = "Testgroep", Description = "Testgroep voor de programmeurs", Started = DateTime.Now, Ended = DateTime.MaxValue });
+                        new Group { Name = "?", Description = "?", Started = DateTime.MinValue, Ended = DateTime.Now, StartedById = dummyUser.Id, EndedById = dummyUser.Id},
+                        new Group { Name = "Testgroep", Description = "Testgroep voor de programmeurs", Started = DateTime.Now, Ended = DateTime.MaxValue, StartedById = administrator.Id, EndedById = administrator.Id });
                     context.SaveChanges();
                 }
 
-                if (!context.Message.Any())
+                if (!context.UserGroup.Any())
                 {
-                    GroupSpace2022User dummyUser = context.Users.FirstOrDefault(u => u.UserName == "dummy");
-                    Group dummy = context.Group.Where(g => g.Name == "?").First();
-                    context.Message.AddRange(
-                        new Message { Title = "-", Content = "-", GroupId = dummy.Id, SenderId = dummyUser.Id },
-                        new Message { Title = "-", Content = "-", GroupId = dummy.Id + 1, SenderId = dummyUser.Id});
+                    context.UserGroup.AddRange(
+                        new UserGroup { UserId = dummyUser.Id, GroupId = 1 });
+                    context.SaveChanges();
+                }
+
+                if (!context.Message.Any())   // Voeg enkele messages toe
+                {
+                    Message dummyMessage = new Message { Title = "-", Content = "-", Created = DateTime.Now, SenderId = "-" };
+                    MessageDestination dummymd = new MessageDestination { Deleted = DateTime.MinValue, Message = dummyMessage, Read = DateTime.Now, Received = DateTime.Now, ReceiverId = "-" };
+                    context.Message.Add(dummyMessage);
+                    context.MessageDestinations.Add(dummymd);
+                    context.SaveChanges();
+                }
+
+                if (!context.MediaType.Any())
+                {
+                    context.MediaType.AddRange(
+                        new MediaType { Name = "-", Denominator = "-", Deleted = DateTime.Now },
+                        new MediaType { Name = "Alles", Denominator = "All File (*.*)|*.*|Alle Bestanden", Deleted = DateTime.MaxValue },
+                        new MediaType { Name = "Videos", Denominator = "MP4 (*.mpg)|*.mpg|Videos mp4", Deleted = DateTime.MaxValue });
                     context.SaveChanges();
                 }
 
@@ -80,7 +100,10 @@ namespace GroupSpace2022.Data
                 if (!context.Category.Any())
                 {
                     Category dummy = new Category { Name = "?", Description = "?" };
-                    context.Category.Add(dummy);
+                    context.Category.AddRange(
+                        dummy,
+                        new Category { Name = "Family Pictures", Description = "All pictures concerning the whole family", Deleted = DateTime.MaxValue },
+                        new Category { Name = "Holidays", Description = "All holiday media", Deleted = DateTime.MaxValue });
                     context.SaveChanges();
                 }
 

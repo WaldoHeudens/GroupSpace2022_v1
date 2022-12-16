@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
 
 namespace GroupSpace2022.Models
 {
@@ -16,16 +15,39 @@ namespace GroupSpace2022.Models
         [Display(Name = "Omschrijving")]
         public string Description { get; set; }
 
-        [Required]
         [Display(Name = "Toegevoegd")]
-        [DataType(DataType.DateTime)]
-        public DateTime Added { get; set; } = DateTime.Now;
+        public DateTime Added { get; set; }
 
+        [Display(Name = "Verwijderd")]
+        public DateTime Deleted { get; set; }
+
+        [Display(Name = "Type")]
+        public int TypeId { get; set; }
+
+        [Display(Name = "Categorieën")]
         [NotMapped]
-        public List<int>? CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
 
-        public List<Category>? Categories { get; set; }
+        [Display(Name = "Type")]
+        public MediaType? Type { get; set; }
 
-        public DateTime Deleted { get; set; } = DateTime.MaxValue;
+        [Display(Name = "Categorieën")]
+        public List<Category>? Categories { set; get; }
+
     }
+
+    public class MediaType
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [Display(Name = "Naam")]
+        public string Name { get; set; }
+
+        [Required]
+        public string Denominator { get; set; }
+
+        public DateTime Deleted { get; set; }
+    }
+
 }

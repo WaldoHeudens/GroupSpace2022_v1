@@ -1,34 +1,47 @@
-﻿@model IEnumerable<GroupSpace2022.Models.Message>
+﻿@model GroupSpace2022.Models.MessageIndexViewModel
+
 
 @{
     ViewData["Title"] = "Boodschappen";
+    string verticalLine = " | ";
 }
 
-<h1>Index</h1>
+<h1>Boodschappen</h1>
 
 <p>
-    <a asp-action="Create">Nieuwe boodschap</a>
+    <a asp-action="Create">Nieuwe Boodschap</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Group)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
+
+<p>
+    <form asp-controller="Messages" asp-action="Index" method="get">
+        <h5><select asp-for="SelectedMode" asp-items="Model.ModesToSelect" onchange="this.form.submit()"></select></h5>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        <a asp-action="Index" asp-route-orderBy="@ViewBag.TitleField">@Html.DisplayNameFor(model => model.Messages[0].Title)</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-orderBy="@ViewBag.ContentField">@Html.DisplayNameFor(model => model.Messages[0].Content)</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-orderBy="@ViewBag.SentField">@Html.DisplayNameFor(model => model.Messages[0].Sent)</a>
+                    </th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th><input type="text" name="titleFilter" asp-for="TitleFilter" onchange="this.form.submit()" /></th>
+                    <th><input type="text" name="messageFilter" asp-for="MessageFilter" onchange="this.form.submit()" /></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+    </form>
+</p>
+<tbody>
+    @foreach (var item in Model.Messages)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -40,14 +53,39 @@
                 @Html.DisplayFor(modelItem => item.Sent)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Group.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Wijzig</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijder</a>
+                <a asp-action="Details" asp-route-id="@item.MessageId">Details</a>
+                @if (Model.SelectedMode == "R")
+                {
+                    @verticalLine
+                    <a asp-action="Delete" asp-route-id="@item.MessageId">Verwijder</a>
+                }
             </td>
         </tr>
-}
-    </tbody>
+    }
+</tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.Messages.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Messages.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-userName=@ViewData["TitleField"]
+   asp-route-email=@ViewData["ContentField"]
+   asp-route-name=@ViewData["SentField"]
+   asp-route-orderBy=@ViewData["OrderBy"]
+   asp-route-pageNumber="@(Model.Messages.PaginaIndex - 1)"
+   class="btn btn-default @prevDisabled">
+   Vorige
+</a>
+<a asp-action="Index"
+   asp-route-userName=@ViewData["TitleField"]
+   asp-route-email=@ViewData["ContentField"]
+   asp-route-name=@ViewData["SentField"]
+   asp-route-orderBy=@ViewData["OrderBy"]
+   asp-route-pageNumber="@(Model.Messages.PaginaIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Volgende
+</a>
+

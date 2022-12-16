@@ -13,7 +13,7 @@ namespace GroupSpace2022.Controllers
         {
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchField)
         {
             return View();
         }
@@ -28,5 +28,6 @@ namespace GroupSpace2022.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

@@ -4,6 +4,7 @@ using GroupSpace2022.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupSpace2022.Migrations
 {
     [DbContext(typeof(GroupSpace2022Context))]
-    partial class GroupSpace2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20221216181935_messagesUpdated")]
+    partial class messagesUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +29,12 @@ namespace GroupSpace2022.Migrations
                     b.Property<int>("CategoriesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MediaId")
+                    b.Property<int>("MediasId")
                         .HasColumnType("int");
 
-                    b.HasKey("CategoriesId", "MediaId");
+                    b.HasKey("CategoriesId", "MediasId");
 
-                    b.HasIndex("MediaId");
+                    b.HasIndex("MediasId");
 
                     b.ToTable("CategoryMedia");
                 });
@@ -205,40 +207,11 @@ namespace GroupSpace2022.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MessageId");
 
-                    b.HasIndex("TypeId");
-
                     b.ToTable("Media");
-                });
-
-            modelBuilder.Entity("GroupSpace2022.Models.MediaType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Deleted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Denominator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MediaType");
                 });
 
             modelBuilder.Entity("GroupSpace2022.Models.Message", b =>
@@ -512,7 +485,7 @@ namespace GroupSpace2022.Migrations
 
                     b.HasOne("GroupSpace2022.Models.Media", null)
                         .WithMany()
-                        .HasForeignKey("MediaId")
+                        .HasForeignKey("MediasId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -531,14 +504,6 @@ namespace GroupSpace2022.Migrations
                     b.HasOne("GroupSpace2022.Models.Message", null)
                         .WithMany("Media")
                         .HasForeignKey("MessageId");
-
-                    b.HasOne("GroupSpace2022.Models.MediaType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("GroupSpace2022.Models.Message", b =>

@@ -1,44 +1,39 @@
 ﻿@model GroupSpace2022.Models.Group
 
+
 @{
-    ViewData["Title"] = "Verwijderen";
+    ViewData["Title"] = "Verwijder groep";
 }
 
-<h1>Verwijderen groep</h1>
+<h1>"Verwijder groep"</h1>
 
-<h3>Ben je zeker dat je deze groep wil verwijderen?</h3>
+<h3>"Ben je zeker dat je deze groep wil verwijderen?"</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Started)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Started)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ended)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ended)
-        </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Verwijderen" class="btn btn-danger" /> |
+        <input type="submit" value="Verwijder" class="btn btn-danger" /> |
         <a asp-action="Index">Terug naar overzicht</a>
     </form>
 </div>

@@ -1,4 +1,5 @@
-﻿using GroupSpace2022.Areas.Identity.Data;
+﻿using GroupSpace2022.Services;
+using GroupSpace2022.Areas.Identity.Data;
 using GroupSpace2022.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +17,9 @@ namespace GroupSpace2022.Controllers
             _context = context;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
-            _user = _context.Users.FirstOrDefault(u => u.UserName == httpContextAccessor.HttpContext.User.Identity.Name);
-        }
 
+            // Haal de gebruiker op van deze request-afhandeling
+            _user = Globals.GetUser(httpContextAccessor.HttpContext.User.Identity.Name);
+        }
     }
 }

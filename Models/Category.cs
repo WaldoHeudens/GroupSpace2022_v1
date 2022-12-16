@@ -7,16 +7,15 @@ namespace GroupSpace2022.Models
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Categorie")]
+        [Display(Name = "Naam")]
         public string Name { get; set; }
 
         [Required]
         [Display(Name = "Omschrijving")]
         public string Description { get; set; }
 
-        [Display(Name = "Media")]
-        public List<Media>? Medias { get; set; }
+        public DateTime Deleted { get; set; }
 
-        public DateTime Deleted { get; set; } = DateTime.MaxValue;
+        public List<Media>? Media { get; set; }
     }
 }

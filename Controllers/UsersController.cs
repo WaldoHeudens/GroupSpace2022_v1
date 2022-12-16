@@ -3,15 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using GroupSpace2022.Models.ViewModels;
 using GroupSpace2022.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace GroupSpace2022.Controllers
 {
-    [Authorize (Roles = "Beheerder")]
+    [Authorize (Roles = "UserAdministrator")]
     public class UsersController : GroupSpace2022Controller
     {
 
@@ -20,7 +18,7 @@ namespace GroupSpace2022.Controllers
         {
         }
 
-        public IActionResult Index(string userName, string firstName, string lastName, string email)
+        public IActionResult Index(string userName, string firstName, string lastName, string email, int? pageNumber)
         {
             List<UserViewModel> vmUsers = new List<UserViewModel>();
             List<GroupSpace2022User> users = _context.Users
@@ -49,7 +47,9 @@ namespace GroupSpace2022.Controllers
             ViewData["firstName"] = firstName;
             ViewData["lastName"] = lastName;
             ViewData["email"] = email;
-            return View(vmUsers);
+            if (pageNumber == null) pageNumber = 1;
+            Paginas<UserViewModel> model = new Paginas<UserViewModel>(vmUsers, vmUsers.Count, 1, 10);
+            return View(model);
         }
 
         public IActionResult Undelete(string userName)

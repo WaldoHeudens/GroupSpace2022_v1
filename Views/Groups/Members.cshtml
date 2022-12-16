@@ -1,0 +1,74 @@
+﻿@model IEnumerable<GroupSpace2022.Models.MemberViewModel>
+
+@using GroupSpace2022.Services
+@using GroupSpace2022.Areas.Identity.Data
+
+@{
+    ViewData["Title"] = "Groepsleden";
+    string spacer = " | ";
+    string id = ViewData["GroupId"].ToString();
+    string searchField = ViewData["SearchField"].ToString();
+    GroupSpace2022User _user = Globals.GetUser(User.Identity.Name);
+}
+
+<h1>@ViewData["GroupName"]: Beheer van groepsleden</h1>
+
+@if (Model.Count() > 10)
+{
+    <p style="margin-top:20px">
+        <form asp-action="Index" asp-controller="Groups" method="get">
+            Selecteer:  
+            <input type="text" name="searchField" />
+            <input type="submit" value="Filter" />
+            <input type="hidden" name="id"/>
+        </form>
+    </p>
+}
+
+
+@if ((bool)ViewData["isHost"])
+{
+    <p>
+        <a asp-action="Invite" asp-route-id ="@ViewBag.GroupId" >Invite new member</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-md-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Added)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.isHost)
+            </th>
+            <th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Added)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.isHost)
+            </td>
+            <td>
+                @if ((bool)ViewData["isHost"] && item.UserId != _user.Id)
+                {
+                    <a asp-action="DeleteMember" asp-route-groupId="@ViewBag.GroupId" asp-route-userId="@item.UserId">DeleteMember</a>
+                    <a asp-action="MakeHost" asp-route-groupId="@ViewBag.GroupId" asp-route-userId="@item.UserId">Make Host</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

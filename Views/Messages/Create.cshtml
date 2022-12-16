@@ -1,17 +1,24 @@
-﻿@model GroupSpace2022.Models.Message
+﻿@model GroupSpace2022.Models.MessageViewModel
 
 @{
     ViewData["Title"] = "Nieuwe boodschap";
 }
 
-<h1>Nieuwe boodschap maken</h1>
+<h1>Nieuwe boodschap</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <input type="hidden" asp-for="SenderId" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="GroupIds" class="control-label"></label>
+                <select multiple="multiple" asp-for="GroupIds" class ="form-control" asp-items="ViewBag.GroupIds"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DestinyIds" class="control-label"></label>
+                <select multiple="multiple" asp-for="DestinyIds" class ="form-control" asp-items="ViewBag.DestinyIds"></select>
+            </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -19,20 +26,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
+                <input type="textarea" rows="3" asp-for="Content" class="form-control" />
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Sent" class="control-label"></label>
-                <input asp-for="Sent" class="form-control" />
-                <span asp-validation-for="Sent" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GroupId" class="control-label"></label>
-                <select asp-for="GroupId" class ="form-control" asp-items="ViewBag.GroupId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Verzenden" class="btn btn-primary" />
+                <input type="submit" value=Localizer["Verzenden"] class="btn btn-primary" />
             </div>
         </form>
     </div>

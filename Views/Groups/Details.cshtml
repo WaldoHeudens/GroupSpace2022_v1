@@ -1,42 +1,67 @@
-﻿@model GroupSpace2022.Models.Group
+﻿@model GroupSpace2022.Models.GroupViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] ="Details Groep";
 }
 
-<h1>Details</h1>
+<h1>"Details Groep"</h1>
 
 <div>
-    <h4>Groep</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Started)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Started)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ended)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartedBy)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ended)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StartedBy)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Members)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.isHost)
+            {
+                <a asp-action="Invite" asp-route-id="@Model.Id">"Edit Members"</a>
+            }
+            @foreach (string s in Model.Members)
+            {
+                <p>@s</p>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hosts)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.isHost)
+            {
+                <a asp-action="Hosts" asp-route-id="@Model.Id">"Edit Hosts"</a>
+            }
+            @foreach (string s in Model.Hosts)
+            {
+                <p>@s</p>
+            }
+        </dd>
+
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Wijzigen</a> |
     <a asp-action="Index">Terug naar overzicht</a>
 </div>

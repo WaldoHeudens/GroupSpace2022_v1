@@ -1,7 +1,10 @@
-﻿@model IEnumerable<GroupSpace2022.Models.ViewModels.UserViewModel>
+﻿@model Paginas<GroupSpace2022.Models.ViewModels.UserViewModel>
 
 @{
     ViewData["Title"] = "Gebruikers";
+    string VerticaalStreepje = " | ";
+    string komma = "";
+
 }
 
 <h1>Gebruikers</h1>
@@ -10,19 +13,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserName)
+                Gebruiker
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                Voornaam
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Achternaam
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                E-mail
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Roles)
+                Rollen
             </th>
             <th></th>
         </tr>
@@ -60,9 +63,13 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
+                    @{komma = "";}
                     @foreach (string role in item.Roles)
                     {
-                        <p>@role</p>   
+                        @komma @role
+                        {
+                            komma = ", ";
+                        }
                     }
                 </td>
                 <td>
@@ -72,7 +79,7 @@
                 }
                 else
                 {
-                        <a asp-action="Delete" asp-route-userName="@item.UserName">Verwijderen | </a>
+                        <a asp-action="Delete" asp-route-userName="@item.UserName">Verwijderen </a> @VerticaalStreepje
                         <a asp-action="Roles" asp-route-userName="@item.UserName">Rollen</a>
                 }
             </td>
@@ -80,3 +87,26 @@
     }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-userName=@ViewData["userName"]
+   asp-route-email=@ViewData["email"]
+   asp-route-name=@ViewData["name"]
+   asp-route-pageNumber="@(Model.PaginaIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Vorige
+</a>
+<a asp-action="Index"
+   asp-route-userName=@ViewData["userName"]
+   asp-route-name=@ViewData["name"]
+   asp-route-email=@ViewData["email"]
+   asp-route-pageNumber="@(Model.PaginaIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Volgende
+</a>
+

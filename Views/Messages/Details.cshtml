@@ -10,30 +10,49 @@
     <h4>Boodschap</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Content)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
+        <dd class="col-sm-10">
+            @Html.DisplayTextFor(model => model.Content)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sent)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Created)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sent)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Created)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Group)
+        <dt class="col-sm-2">
+            Receivers
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Group.Name)
-        </dd>
+        <dt class="col-sm-4 col-md-3 col-ld-2">
+            Read
+        </dt>
+        <dt class="col-sm-6 col-md-7 col-ld-8">
+            By
+        </dt>
+        @foreach (MessageDestination item in Model.Destinations)
+        {
+            <dt class="col-sm-2">
+            </dt>
+            <dd class="col-sm-4 col-md-3 col-ld-2">
+                @if (item.Read < DateTime.Now)
+                {
+                    @item.Read.ToString()
+                    ;
+                }
+            </dd>
+            <dd class="col-sm-6 col-md-7 col-ld-8">
+                @item.Receiver.FirstName
+                @item.Receiver.LastName
+            </dd>
+        }
     </dl>
 </div>
 <div>

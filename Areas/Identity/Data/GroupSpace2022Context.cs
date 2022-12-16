@@ -1,4 +1,5 @@
 ﻿using GroupSpace2022.Areas.Identity.Data;
+using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,16 @@ public class GroupSpace2022Context : IdentityDbContext<GroupSpace2022User>
 
     public DbSet<GroupSpace2022.Models.Message> Message { get; set; }
 
+    public DbSet<GroupSpace2022.Models.MessageDestination> MessageDestinations { get; set; }
+
     public DbSet<GroupSpace2022.Models.Category> Category { get; set; }
 
     public DbSet<GroupSpace2022.Models.Media> Media { get; set; }
+
+    public DbSet<GroupSpace2022.Models.MediaType> MediaType { get; set; }
+
+    public DbSet<GroupSpace2022.Models.Token> Token { get; set; }
+
+    public DbSet<GroupSpace2022.Models.UserGroup> UserGroup { get; set; }
 
 }

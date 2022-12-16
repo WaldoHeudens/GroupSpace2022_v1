@@ -2,60 +2,55 @@
 
 @{
     ViewData["Title"] = "Groepen";
+    string spacer = " | ";
 }
 
-<h1>Lijst van groepen</h1>
+<h1>Beheer van groepen</h1>
 
-<p>
-    <a asp-action="Create">Maak nieuwe groep</a>
+<p style="margin-top:20px">
+    <form asp-action="Index" asp-controller="Groups" method="get">
+        Selecteer:
+        <input type="text" name="searchField" />
+        <input type="submit" value="Filter" />
+    </form>
 </p>
-
-<form method="get" asp-action="Index" asp-controller="Groups">
-    <p>
-        <input type="text" name="searchField" value=@ViewData["searchField"] />
-        <input type="submit" value"Selecteer" />
-    </p>
-</form>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th class="col-md-2">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Started)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ended)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Started)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ended)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Wijzig</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijder</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Wijzig</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    @if (((List<int>)ViewData["isOnlyHost"]).Contains(item.Id))
+                    {
+                        @spacer <a asp-action="Delete" asp-route-id="@item.Id">Verwijder</a>
+                    }
+                    @if (((List<int>)ViewData["Hosts"]).Contains(item.Id))
+                    {
+                        @spacer <a asp-action="Members" asp-route-id="@item.Id">Leden</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

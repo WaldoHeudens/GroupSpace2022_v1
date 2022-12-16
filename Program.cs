@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using GroupSpace2022.Data;
 using Microsoft.AspNetCore.Identity;
 using GroupSpace2022.Areas.Identity.Data;
@@ -9,9 +8,10 @@ using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Manueel toegevoegd om te werken met Identity Framework
+// Manueel toegevoegd om te werken met verschillende databases in Identity Framework
+var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_EHB_SQLServer");
 //var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
-var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
+//var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
 
 builder.Services.AddDbContext<GroupSpace2022Context>(options =>
     options.UseSqlServer(connectionString ?? throw new InvalidOperationException("Connection string 'GroupSpace2022Context' not found.")));
@@ -26,6 +26,10 @@ builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignI
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GroupSpace2022Context>();
 
+builder.Services.AddLocalization(option => option.ResourcesPath = "Meertaligheid");
+builder.Services.AddMvc()
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -64,6 +68,13 @@ builder.Services.Configure<IdentityOptions>(options =>
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
+
+var supportCultures = new[] { "nl-BE", "en-US", "fr", "nl" };
+
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportCultures[0])
+    .AddSupportedCultures(supportCultures);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -91,5 +102,8 @@ using (var scope = app.Services.CreateScope())
 
 // Manueel toegevoegd om te werken met Identity Framework
 app.MapRazorPages();
+
+// Voer de "Globals" middleware uit
+app.UseMiddleware<Globals>();
 
 app.Run();

@@ -4,8 +4,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using GroupSpace2022.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -129,7 +127,9 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             }
             if (haveToUpdate)
                 await _userManager.UpdateAsync(user);
-
+            
+            // zorg dat de actieve gebruiker geupdated wordt
+            // Globals.ReloadUser(user.UserName, dbContext)
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
