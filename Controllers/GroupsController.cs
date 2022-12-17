@@ -22,7 +22,7 @@ namespace GroupSpace2022.Controllers
         }
 
         // GET: Groups
-        public async Task<IActionResult> Index(string searchField = " ")
+        public async Task<IActionResult> Index(string searchField = "")
         {
             // Haal de groepen op van de huidige gebruiker en de groepen waarvan deze (de enige) host is
             List<int> hosts = new List<int>();
@@ -50,6 +50,7 @@ namespace GroupSpace2022.Controllers
 
             groups = groups.OrderBy(g => g.Name).ToList();
 
+            ViewData["searchField"] = searchField;
             ViewData["Hosts"] = hosts;
             ViewData["isOnlyHost"] = isOnlyHost;
             return View(groups);

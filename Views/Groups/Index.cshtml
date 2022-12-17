@@ -10,7 +10,7 @@
 <p style="margin-top:20px">
     <form asp-action="Index" asp-controller="Groups" method="get">
         Selecteer:
-        <input type="text" name="searchField" />
+        <input type="text" name="searchField" value=@ViewData["searchField"] ></>
         <input type="submit" value="Filter" />
     </form>
 </p>

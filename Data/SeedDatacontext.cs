@@ -80,8 +80,8 @@ namespace GroupSpace2022.Data
 
                 if (!context.Message.Any())   // Voeg enkele messages toe
                 {
-                    Message dummyMessage = new Message { Title = "-", Content = "-", Created = DateTime.Now, SenderId = "-" };
-                    MessageDestination dummymd = new MessageDestination { Deleted = DateTime.MinValue, Message = dummyMessage, Read = DateTime.Now, Received = DateTime.Now, ReceiverId = "-" };
+                    Message dummyMessage = new Message { Title = "dummy", Content = "-", Created = DateTime.Now, SenderId = dummyUser.Id };
+                    MessageDestination dummymd = new MessageDestination { Deleted = DateTime.MinValue, Message = dummyMessage, Read = DateTime.Now, Received = DateTime.Now, ReceiverId = dummyUser.Id };
                     context.Message.Add(dummyMessage);
                     context.MessageDestinations.Add(dummymd);
                     context.SaveChanges();
@@ -112,7 +112,7 @@ namespace GroupSpace2022.Data
                     List<Category> DummyCategories = new List<Category>();
                     DummyCategories.Add(context.Category.Where(c => c.Name == "?").First());
                     context.Media.AddRange(
-                        new Media { Name = "?", Description = "?", Categories = DummyCategories });
+                        new Media { Name = "?", Description = "?", Categories = DummyCategories, TypeId=1 });
                     context.SaveChanges();
                 }
 
