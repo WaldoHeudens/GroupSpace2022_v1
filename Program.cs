@@ -5,6 +5,7 @@ using GroupSpace2022.Areas.Identity.Data;
 using GroupSpace2022.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using NETCore.MailKit.Infrastructure.Internal;
+using GroupSpace2022.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,11 +70,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
-var supportCultures = new[] { "nl-BE", "en-US", "fr", "nl" };
-
-var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture(supportCultures[0])
-    .AddSupportedCultures(supportCultures);
 
 var app = builder.Build();
 
@@ -89,10 +85,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -100,7 +92,19 @@ using (var scope = app.Services.CreateScope())
     await SeedDatacontext.Initialize(services, userManager);
 }
 
-// Manueel toegevoegd om te werken met Identity Framework
+
+// zorg dat het systeem beschikt over een lijst van gebruikte cultures
+var localizationOptions = new RequestLocalizationOptions()
+    .AddSupportedCultures(Language.SupportedCultures)
+    .AddSupportedUICultures(Language.SupportedCultures)
+    .SetDefaultCulture("nl-BE");
+
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Manueel toegevoegd om te werken met Identity Framework dat niet in MVC geschreven is
 app.MapRazorPages();
 
 // Voer de "Globals" middleware uit

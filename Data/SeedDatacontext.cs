@@ -12,9 +12,25 @@ namespace GroupSpace2022.Data
         {
             using (var context = new GroupSpace2022Context(serviceProvider.GetRequiredService<DbContextOptions<GroupSpace2022Context>>()))
             {
-                context.Database.Migrate();
                 context.Database.EnsureCreated();   // Zorg dat de databank bestaat
+                context.Database.Migrate();
 
+                // Initialisatie van de talen
+                if (!context.Language.Any())
+                {
+                    context.Language.AddRange
+                        (
+                            new Language() { Id = "-", Name = "-", Cultures = "", IsShown = false},
+                            new Language() { Id = "en", Name = "English", Cultures = "UK;US", IsShown = true },
+                            new Language() { Id = "fr", Name = "français", Cultures = "BE;FR", IsShown = true },
+                            new Language() { Id = "nl", Name = "Nederlands", Cultures = "BE;NL", IsShown = true }
+                        );
+                    context.SaveChanges();
+                }
+
+                Language.Initialize(context);
+
+                // Initialisatie van de rollen
                 if (!context.Roles.Any())
                 {
 

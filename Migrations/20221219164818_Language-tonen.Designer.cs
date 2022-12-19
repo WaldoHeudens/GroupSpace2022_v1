@@ -4,6 +4,7 @@ using GroupSpace2022.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupSpace2022.Migrations
 {
     [DbContext(typeof(GroupSpace2022Context))]
-    partial class GroupSpace2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20221219164818_Language-tonen")]
+    partial class Languagetonen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
