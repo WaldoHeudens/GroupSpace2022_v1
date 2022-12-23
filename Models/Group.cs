@@ -40,22 +40,28 @@ namespace GroupSpace2022.Models
         public int Id { get; set; }
 
         [ForeignKey("Group")]
+        [Display (Name = "Groep")]
         public int GroupId { get; set; } = 1;
         public Group? Group { get; set; }
 
         [ForeignKey("GroupSpace2022User")]
+        [Display(Name = "Gebruiker")]
         public string UserId { get; set; } = "Dummy";
         public GroupSpace2022User? User { get; set; }
+        [Display(Name = "Lid sinds")]
         public DateTime Added { get; set; } = DateTime.Now;
+        [Display(Name = "Lid tot")]
         public DateTime Left { get; set; } = DateTime.MaxValue;
+        [Display(Name = "Host sinds")]
         public DateTime BecameHost { get; set; } = DateTime.MinValue;
+        [Display(Name = "Host tot")]
         public DateTime NoHostAnymore { get; set; } = DateTime.MaxValue;
     }
 
     public class GroupViewModel
     {
         public int Id { get; set; }
-        [Display(Name = "Name")]
+        [Display(Name = "Naam")]
         public string Name { get; set; }
         [Display(Name = "Description")]
         public string Description { get; set; }

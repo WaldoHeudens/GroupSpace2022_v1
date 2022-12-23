@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace GroupSpace2022.Models.ViewModels
+namespace GroupSpace2022.Models
 {
 
     public class UserViewModel
     {
-        [Display (Name = "Gebruiker")]
+        [Display(Name = "Gebruiker")]
         public string UserName { get; set; }
 
         [Display(Name = "Voornaam")]
@@ -23,16 +23,16 @@ namespace GroupSpace2022.Models.ViewModels
 
 
         [Display(Name = "Rollen")]
-        public List<String> Roles { get; set; }
+        public List<string> Roles { get; set; }
 
     }
 
     public class RoleViewModel
     {
-        [Display (Name = "Gebruiker")]
+        [Display(Name = "Gebruiker")]
         public string UserName { get; set; }
 
         [Display(Name = "Rollen")]
-        public List <string> Roles { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

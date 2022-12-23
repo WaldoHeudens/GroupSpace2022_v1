@@ -1,4 +1,8 @@
 ﻿<!DOCTYPE html>
+
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
 <html lang="nl">
 <head>
     <meta charset="utf-8" />
@@ -48,10 +52,10 @@
                                                 <li style="margin-top:-7px;margin-bottom:-7px">&nbsp;&nbsp------</li>
                                             }
                                             <li class="nav-item">
-                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Index"> Beheren groepen</a>
+                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Index"> @localizer["Beheren groepen"]</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Create"> Groep maken</a>
+                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Create"> @localizer["Groep maken"]</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -59,39 +63,39 @@
                                 else  // toon de algemene "Group"-hoofding
                                 {
                                     <li class="nav-item dropdown">
-                                        <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Groepen</a>
+                                                    <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">@localizer["Beheren groepen"]</a>
                                         <ul class="dropdown-menu">
                                             <li class="nav-item">
-                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Create"> Groep maken</a>
+                                                <a class="nav-link text-dark" asp-controller="Groups" asp-action="Create">@localizer["Groep maken"]</a>
                                             </li>
                                         </ul>
                                     </li>
                                 }
                                 <li class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Mediabeheer</a>
+                                    <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">@localizer["Mediabeheer"]</a>
                                     <ul class="dropdown-menu">
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Media" asp-action="Index">Media</a>
+                                            <a class="nav-link text-dark" asp-controller="Media" asp-action="Index">@localizer["Media"]</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="MediaTypes" asp-action="Index">Types</a>
+                                            <a class="nav-link text-dark" asp-controller="MediaTypes" asp-action="Index">@localizer["Types"]</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">Categorieën</a>
+                                            <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">@localizer["Categorieën"]</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Messages" asp-action="Index">Boodschappen</a>
+                                    <a class="nav-link text-dark" asp-controller="Messages" asp-action="Index">@localizer["Boodschappen"]</a>
                                 </li>
                             }
                             @if (User.IsInRole("SystemAdministrator"))
                             {
                                 <li class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Systeem</a>
+                                    <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">@localizer["Systeem"]</a>
                                     <ul class="dropdown-menu">
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Languages" asp-action="Index">Talenbeheer</a>
+                                            <a class="nav-link text-dark" asp-controller="Languages" asp-action="Index">@localizer["Talen"]</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -99,12 +103,17 @@
                             @if (User.IsInRole("UserAdministrator"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">Gebruikersbeheer</a>
+                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">@localizer["Gebruikers"]</a>
                                 </li>
                             }
+
                         }
                     </ul>
                     <partial name="_LoginPartial" />
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <partial name="_LanguagePartial"/>
+                    }
                 </div>
             </div>
         </nav>

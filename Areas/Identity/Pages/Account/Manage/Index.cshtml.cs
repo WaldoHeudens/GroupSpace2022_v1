@@ -5,7 +5,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using GroupSpace2022.Areas.Identity.Data;
+using GroupSpace2022.Models;
+using GroupSpace2022.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -61,6 +64,8 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Telefonnummer")]
             public string PhoneNumber { get; set; }
+            [Display(Name = "Taal")]
+            public string LanguageId { get; set; }
         }
 
         private async Task LoadAsync(GroupSpace2022User user)
@@ -74,8 +79,11 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber,
                 FirstName = user.FirstName,
-                LastName = user.LastName
+                LastName = user.LastName,
+                LanguageId = user.LanguageId
             };
+            ViewData["Languages"] = Language.Languages.Where(l => l.IsShown).ToList();
+            ViewData["LanguageId"] = user.LanguageId;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -124,6 +132,23 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             {
                 user.LastName = Input.LastName;
                 haveToUpdate = true;
+            }
+            if (Input.LanguageId != user.LanguageId)
+            {
+                user.LanguageId = Input.LanguageId;
+                haveToUpdate = true;
+
+                // verwijder de gebruiker uit de actieve SessionUser-lijst
+                GroupSpace2022User gUser = Globals.GetUser(user.UserName);
+                gUser.LanguageId = Input.LanguageId;
+                gUser.Language = Language.LanguagesDictionary[Input.LanguageId];
+
+                // Update the language/culture
+                Response.Cookies.Append(
+                    CookieRequestCultureProvider.DefaultCookieName,
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(Input.LanguageId)),
+                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+
             }
             if (haveToUpdate)
                 await _userManager.UpdateAsync(user);

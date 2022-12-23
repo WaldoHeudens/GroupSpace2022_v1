@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using GroupSpace2022.Data;
 
 namespace GroupSpace2022.Areas.Identity.Pages.Account
 {
@@ -30,12 +32,14 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<GroupSpace2022User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly GroupSpace2022Context _dbContext;
 
         public RegisterModel(
             UserManager<GroupSpace2022User> userManager,
             IUserStore<GroupSpace2022User> userStore,
             SignInManager<GroupSpace2022User> signInManager,
             ILogger<RegisterModel> logger,
+            GroupSpace2022Context dbContext,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -44,6 +48,7 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -135,6 +140,8 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LasttName;
+                user.LanguageId = Thread.CurrentThread.CurrentCulture.ToString().Substring(0, 2);
+                user.Language = _dbContext.Language.FirstOrDefault(l => l.Id == user.LanguageId);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

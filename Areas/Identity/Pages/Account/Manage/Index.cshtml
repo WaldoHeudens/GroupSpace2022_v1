@@ -1,4 +1,5 @@
 ﻿@page
+@using GroupSpace2022.Models;
 @model IndexModel
 @{
     ViewData["Title"] = "Profile";
@@ -29,6 +30,15 @@
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <select asp-for="Input.LanguageId" class="form-control">
+                    @foreach (Language l in (List<Language>)ViewData["Languages"])
+                    {
+                        <option value=@l.Id>@l.Name</option>
+                    }
+                </select>
+                <label asp-for="Input.LanguageId" class="form-label"></label>
             </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>

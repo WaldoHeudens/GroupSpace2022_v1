@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using GroupSpace2022.Models;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using GroupSpace2022.Data;
 
 namespace GroupSpace2022.Areas.Identity.Pages.Account
 {
@@ -22,11 +26,15 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<GroupSpace2022User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly GroupSpace2022Context _dbContext;
 
-        public LoginModel(SignInManager<GroupSpace2022User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<GroupSpace2022User> signInManager, 
+                            ILogger<LoginModel> logger,
+                            GroupSpace2022Context dbContext)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -115,6 +123,11 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    string languageId = _dbContext.Users.FirstOrDefault(u => u.UserName == Input.UserName).LanguageId;
+                    Response.Cookies.Append(
+                    CookieRequestCultureProvider.DefaultCookieName,
+                        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(languageId)),
+                        new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

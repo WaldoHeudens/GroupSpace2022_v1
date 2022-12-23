@@ -27,5 +27,10 @@ public class GroupSpace2022User : IdentityUser
     public int? ActualGroupId { get; set; }  // Nullable, to avoid cascading key conflicts with GroupUser
     public Group? ActualGroup { get; set; }
     public List<UserGroup>? Groups { get; set; }
+
+    [ForeignKey("Language")]
+    public string LanguageId { get; set; } = "nl";
+    public Language? Language { get; set; }
+
 }
 

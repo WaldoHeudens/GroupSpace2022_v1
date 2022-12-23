@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
 using GroupSpace2022.Models;
-using GroupSpace2022.Migrations;
+using Microsoft.AspNetCore.Localization;
+using GroupSpace2022.Areas.Identity.Data;
+using System.Globalization;
 
 namespace GroupSpace2022.Controllers
 {
     public class LanguagesController : GroupSpace2022Controller
     {
 
-        public LanguagesController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+        public LanguagesController(GroupSpace2022Context context, 
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<GroupSpace2022Controller> logger)
             : base(context, httpContextAccessor, logger)
         {
         }
@@ -121,6 +120,37 @@ namespace GroupSpace2022.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(language);
+        }
+
+        public IActionResult ChangeLanguage(string id, string returnUrl)
+        {
+            string culture = Thread.CurrentThread.CurrentCulture.ToString();
+            try
+            {
+                culture = id + culture.Substring(2, 3);
+            }
+            catch
+            {
+                culture = id + "-BE";
+            }
+
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+
+            if (User.Identity.IsAuthenticated)
+            {
+                Language language = _context.Language.FirstOrDefault(l => l.Id == id);
+                _user.Language = language;
+                GroupSpace2022User user = _context.Users.FirstOrDefault(u => u.Id == _user.Id);
+                user.Language = language;
+                user.LanguageId = id;
+                _context.SaveChanges();
+            }
+
+
+            return LocalRedirect(returnUrl);
         }
     }
 }

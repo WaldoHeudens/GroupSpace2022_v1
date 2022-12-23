@@ -6,6 +6,8 @@ using GroupSpace2022.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using NETCore.MailKit.Infrastructure.Internal;
 using GroupSpace2022.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,11 +31,12 @@ builder.Services.AddDefaultIdentity<GroupSpace2022User>(options => options.SignI
 
 builder.Services.AddLocalization(option => option.ResourcesPath = "Meertaligheid");
 builder.Services.AddMvc()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
     .AddDataAnnotationsLocalization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
 builder.Services.Configure<MailKitOptions>(options =>
@@ -70,6 +73,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+// Zorg ervoor dat TempData beschouwd wordt als essentiële cookie, en dus altijd bestaat
+builder.Services.Configure<CookieTempDataProviderOptions>(options => {
+    options.Cookie.IsEssential = true;
+});
+
 
 var app = builder.Build();
 
@@ -79,10 +87,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 using (var scope = app.Services.CreateScope())
@@ -95,10 +101,11 @@ using (var scope = app.Services.CreateScope())
 
 // zorg dat het systeem beschikt over een lijst van gebruikte cultures
 var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("nl-BE")
     .AddSupportedCultures(Language.SupportedCultures)
-    .AddSupportedUICultures(Language.SupportedCultures)
-    .SetDefaultCulture("nl-BE");
+    .AddSupportedUICultures(Language.SupportedCultures);
 
+app.UseRequestLocalization(localizationOptions);
 
 app.MapControllerRoute(
     name: "default",

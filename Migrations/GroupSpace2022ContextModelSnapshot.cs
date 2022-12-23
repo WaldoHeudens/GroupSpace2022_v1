@@ -66,6 +66,10 @@ namespace GroupSpace2022.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LanguageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -106,6 +110,8 @@ namespace GroupSpace2022.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ActualGroupId");
+
+                    b.HasIndex("LanguageId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -186,7 +192,6 @@ namespace GroupSpace2022.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Cultures")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsShown")
@@ -544,7 +549,15 @@ namespace GroupSpace2022.Migrations
                         .WithMany()
                         .HasForeignKey("ActualGroupId");
 
+                    b.HasOne("GroupSpace2022.Models.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ActualGroup");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("GroupSpace2022.Models.Media", b =>

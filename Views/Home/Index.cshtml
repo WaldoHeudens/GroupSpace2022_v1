@@ -1,9 +1,13 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = "GroupSpace";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welkom bij GroupSpace</h1>
-    <h3 style="margin-top:25px">Dit is een educatief project voor de EHB-studenten Graduaat Programmeren </h3>
+    <h1 class="display-4">@localizer["Welkom"]</h1>
+    <h3 style="margin-top:25px">@localizer["Educatief project"] </h3>
     <p style="margin-top:100px">(Learn more about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core)</a>.</p>
 </div>

@@ -1,6 +1,5 @@
 ﻿using GroupSpace2022.Data;
 using Microsoft.AspNetCore.Mvc;
-using GroupSpace2022.Models.ViewModels;
 using GroupSpace2022.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;

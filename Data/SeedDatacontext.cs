@@ -42,7 +42,8 @@ namespace GroupSpace2022.Data
                         UserName = "dummy",
                         FirstName = "?",
                         LastName = "?",
-                        Deleted = DateTime.Now
+                        Deleted = DateTime.Now,
+                        LanguageId = "-"
                         };
                     GroupSpace2022User admin = new GroupSpace2022User
                     {
@@ -51,7 +52,8 @@ namespace GroupSpace2022.Data
                         LockoutEnabled = false,
                         UserName = "Administrator",
                         FirstName = "Administrator",
-                        LastName = "GroupSpace"
+                        LastName = "GroupSpace",
+                        LanguageId = "nl"
                     };
 
                     await userManager.CreateAsync(admin, "Abc!12345");

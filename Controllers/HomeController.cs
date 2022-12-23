@@ -8,7 +8,9 @@ namespace GroupSpace2022.Controllers
     public class HomeController : GroupSpace2022Controller
     {
 
-        public HomeController(GroupSpace2022Context context, IHttpContextAccessor httpContextAccessor, ILogger<GroupSpace2022Controller> logger)
+        public HomeController(GroupSpace2022Context context, 
+            IHttpContextAccessor httpContextAccessor, 
+            ILogger<GroupSpace2022Controller> logger)
             : base(context, httpContextAccessor, logger)
         {
         }
