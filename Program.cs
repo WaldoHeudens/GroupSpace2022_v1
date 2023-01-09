@@ -78,8 +78,16 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options => {
     options.Cookie.IsEssential = true;
 });
 
+// Voorbereiding voor het gebruik van RestFull API
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "GroupSpace2022", Version = "v1" });
+});
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -116,5 +124,8 @@ app.MapRazorPages();
 
 // Voer de "Globals" middleware uit
 app.UseMiddleware<Globals>();
+
+// Voeg toe voor het voorzien van 
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.Run();

@@ -3,6 +3,7 @@ using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Identity;
 using GroupSpace2022.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using GroupSpace2022.Services;
 
 namespace GroupSpace2022.Data
 {
@@ -80,7 +81,7 @@ namespace GroupSpace2022.Data
                 }
                 GroupSpace2022User dummyUser = context.Users.FirstOrDefault(u => u.UserName == "dummy");
                 GroupSpace2022User administrator = context.Users.FirstOrDefault(u => u.UserName == "Administrator");
-
+                
                 if (!context.Group.Any())           // Als er geen groepen aanwezig zijn => Voeg groepen toe
                 {
                     context.Group.AddRange(

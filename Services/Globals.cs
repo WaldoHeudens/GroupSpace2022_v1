@@ -77,12 +77,18 @@ namespace GroupSpace2022.Services
                 FirstEntered = DateTime.Now,
                 LastEntered = DateTime.Now
             };
-
         }
 
         public static GroupSpace2022User GetUser(string? userName)
         {
-            return UserDictionary[userName==null ? "dummy" : userName].User;
+            try
+            {
+                return UserDictionary[userName == null ? "dummy" : userName].User;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
 
