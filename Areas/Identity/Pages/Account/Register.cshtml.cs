@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
+using Microsoft.Extensions.Localization;
+using GroupSpace2022.Meertaligheid;
 
 namespace GroupSpace2022.Areas.Identity.Pages.Account
 {
@@ -32,15 +34,17 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<GroupSpace2022User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly GroupSpace2022Context _dbContext;
+        private readonly GroupSpace2022Context _context;
+        private readonly IStringLocalizer<RegisterModel> _localizer;
 
         public RegisterModel(
             UserManager<GroupSpace2022User> userManager,
             IUserStore<GroupSpace2022User> userStore,
             SignInManager<GroupSpace2022User> signInManager,
             ILogger<RegisterModel> logger,
-            GroupSpace2022Context dbContext,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            GroupSpace2022Context context,
+            IStringLocalizer<RegisterModel> localizer)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -48,7 +52,8 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _dbContext = dbContext;
+            _context = context;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -76,39 +81,39 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            [Required]
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
             [Display(Name = "User Name")]
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
             public string UserName { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
 
-            [Required]
-            [Display(Name = "Voornaam")]
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
-            [Required]
-            [Display(Name = "Familienaam")]
-            public string LasttName { get; set; }
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [EmailAddress]
-            [Display(Name = "E-mail")]
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
+            [EmailAddress(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "EmailAddress")]
+            [Display(Name = "Email")]
             public string Email { get; set; }
 
-
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Wachtwoord")]
+            [StringLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "StringLength", MinimumLength = 6)]
+            [DataType(DataType.Password, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Password")]
+            [Display(Name = "Password")]
             public string Password { get; set; }
 
             /// <summary>
@@ -116,8 +121,8 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Bevestig wachtwoord")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Compare")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -137,11 +142,17 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
+                GroupSpace2022User tempUser = await _emailStore.FindByEmailAsync(Input.Email, CancellationToken.None);
+                if (tempUser != null)
+                {
+                    ModelState.AddModelError(string.Empty, _localizer["A user with this e-mail address already exists."]);
+                    return Page();
+                }
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.FirstName = Input.FirstName;
-                user.LastName = Input.LasttName;
+                user.LastName = Input.LastName;
                 user.LanguageId = Thread.CurrentThread.CurrentCulture.ToString().Substring(0, 2);
-                user.Language = _dbContext.Language.FirstOrDefault(l => l.Id == user.LanguageId);
+                user.Language = _context.Language.FirstOrDefault(l => l.Id == user.LanguageId);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -151,29 +162,29 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    await _userManager.AddToRoleAsync(user, "User");
+                    _userManager.AddToRoleAsync(user, "User");          // By purpose not awaited
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
+                    string emailtext = _localizer["Please confirm your account by"] + $" <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> *1! </a>.";
+                    emailtext = emailtext.Replace("*1!", _localizer["clicking here"]);
+                    await _emailSender.SendEmailAsync(Input.Email, _localizer["Confirm your email"], emailtext);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    //}
+                    //else
+                    //{
+                    //    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //    return LocalRedirect(returnUrl);
+                    //}
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, _localizer[error.Code]);
                 }
             }
 

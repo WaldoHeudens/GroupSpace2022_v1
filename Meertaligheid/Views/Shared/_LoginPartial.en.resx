@@ -123,6 +123,9 @@
   <data name="Beheren" xml:space="preserve">
     <value>Manage</value>
   </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
   <data name="Login" xml:space="preserve">
     <value>Login</value>
   </data>

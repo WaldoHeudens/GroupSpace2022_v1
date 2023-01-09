@@ -117,19 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Afmelden" xml:space="preserve">
-    <value>Afmelden</value>
+  <data name="Invalid login attempt." xml:space="preserve">
+    <value>Tentative d'entrer invalide.</value>
   </data>
-  <data name="Beheren" xml:space="preserve">
-    <value>Beheren</value>
-  </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Hallo</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>Aanmelden</value>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registreren</value>
+  <data name="Sorry, your account has been blocked." xml:space="preserve">
+    <value>Désolé, votre compte a été bloqué. Contactez-nous si vous souhaitez d'entrer de nouveau.</value>
   </data>
 </root>

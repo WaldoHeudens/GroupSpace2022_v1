@@ -6,6 +6,10 @@ namespace GroupSpace2022.Services
 {
     public class Globals
     {
+        // Global systemparameters
+
+
+        // User management and userstatistics
         static Timer CleanUpTimer;
         struct UserStatistics
         {

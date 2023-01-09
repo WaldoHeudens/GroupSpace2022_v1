@@ -117,19 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Afmelden" xml:space="preserve">
-    <value>Afmelden</value>
+  <data name="Please choose your username." xml:space="preserve">
+    <value>Nom d'utilisateur</value>
   </data>
-  <data name="Beheren" xml:space="preserve">
-    <value>Beheren</value>
+  <data name="Please enter your first name." xml:space="preserve">
+    <value>Prénom</value>
   </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Hallo</value>
+  <data name="Please enter your last name." xml:space="preserve">
+    <value>Nom de famille</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Aanmelden</value>
+  <data name="Please enter your phone number." xml:space="preserve">
+    <value>Numéro de téléphone</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registreren</value>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="User name" xml:space="preserve">
+    <value>Nom d"utilisateur</value>
   </data>
 </root>

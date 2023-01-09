@@ -19,6 +19,8 @@ using GroupSpace2022.Models;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
+using Microsoft.Extensions.Localization;
+using GroupSpace2022.Meertaligheid;
 
 namespace GroupSpace2022.Areas.Identity.Pages.Account
 {
@@ -26,15 +28,15 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<GroupSpace2022User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        private readonly GroupSpace2022Context _dbContext;
+        private readonly GroupSpace2022Context _context;
+        private readonly IStringLocalizer<LoginModel> _localizer;
 
-        public LoginModel(SignInManager<GroupSpace2022User> signInManager, 
-                            ILogger<LoginModel> logger,
-                            GroupSpace2022Context dbContext)
+        public LoginModel(SignInManager<GroupSpace2022User> signInManager, ILogger<LoginModel> logger, GroupSpace2022Context context, IStringLocalizer<LoginModel> localizer)
         {
             _signInManager = signInManager;
             _logger = logger;
-            _dbContext = dbContext;
+            _context = context;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -73,15 +75,17 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
+            [Display(Name = "User Name")]
             public string UserName { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "Required")]
             [DataType(DataType.Password)]
+            [Display(Name = "Password")]
             public string Password { get; set; }
 
             /// <summary>
@@ -104,7 +108,7 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            // ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
         }
@@ -119,11 +123,22 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+
+                GroupSpace2022User _user = _context.Users.FirstOrDefault(u => u.UserName == Input.UserName);
+
+                if (_user == null)
+                {
+                    ModelState.AddModelError(string.Empty, _localizer["Invalid login attempt."]);
+                    return Page();
+                }
+
                 var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    string languageId = _dbContext.Users.FirstOrDefault(u => u.UserName == Input.UserName).LanguageId;
+
+                    // Change the culture of this session to the user's culture
+                    string languageId = _user.LanguageId;
                     Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
                         CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(languageId)),
@@ -141,7 +156,7 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, _localizer["Invalid login attempt."]);
                     return Page();
                 }
             }

@@ -117,19 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Afmelden" xml:space="preserve">
-    <value>Afmelden</value>
+  <data name="A user with this e-mail address already exists." xml:space="preserve">
+    <value>A user with this e-mail address already exists.</value>
   </data>
-  <data name="Beheren" xml:space="preserve">
-    <value>Beheren</value>
+  <data name="clicking here" xml:space="preserve">
+    <value>clicking here</value>
   </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Hallo</value>
+  <data name="Confirm your email" xml:space="preserve">
+    <value>Confirm your email</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Aanmelden</value>
+  <data name="DuplicateUserName" xml:space="preserve">
+    <value>A user with this username already exists</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registreren</value>
+  <data name="PasswordRequiresLower" xml:space="preserve">
+    <value>Passwords must have at least one lowercase ('a'-'z')  (Waldo</value>
+  </data>
+  <data name="PasswordRequiresNonAlphaNumeric" xml:space="preserve">
+    <value>Passwords must have at least one non alphanumeric character.</value>
+  </data>
+  <data name="PasswordRequiresNumeric" xml:space="preserve">
+    <value>Passwords moust have ate least one numeric ('0'-'9')</value>
+  </data>
+  <data name="PasswordRequiresUpper" xml:space="preserve">
+    <value>Passwords must have at least one uppercase ('A'-'Z')</value>
+  </data>
+  <data name="Please confirm your account by" xml:space="preserve">
+    <value>Please confirm your account by</value>
   </data>
 </root>

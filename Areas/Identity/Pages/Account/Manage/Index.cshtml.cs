@@ -5,12 +5,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using GroupSpace2022.Areas.Identity.Data;
+using GroupSpace2022.Data;
 using GroupSpace2022.Models;
 using GroupSpace2022.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
 {
@@ -18,13 +20,19 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<GroupSpace2022User> _userManager;
         private readonly SignInManager<GroupSpace2022User> _signInManager;
+        private readonly IStringLocalizer<IndexModel> _localizer;
+        private readonly GroupSpace2022Context _context;
 
         public IndexModel(
             UserManager<GroupSpace2022User> userManager,
-            SignInManager<GroupSpace2022User> signInManager)
+            SignInManager<GroupSpace2022User> signInManager,
+            IStringLocalizer<IndexModel> localizer,
+            GroupSpace2022Context context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _localizer = localizer;
+            _context = context;
         }
 
         /// <summary>
@@ -57,14 +65,17 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Display(Name = "Voornaam")]
+            [Display(Name = "First name")]
             public string FirstName { get; set; }
-            [Display(Name = "Achternaam")]
+
+            [Display(Name = "Last name")]
             public string LastName { get; set; }
+
             [Phone]
-            [Display(Name = "Telefonnummer")]
+            [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-            [Display(Name = "Taal")]
+
+            [Display(Name = "Language")]
             public string LanguageId { get; set; }
         }
 
@@ -103,7 +114,7 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound(_localizer["Unable to load user with ID"] + $" '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -118,46 +129,59 @@ namespace GroupSpace2022.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
+                    StatusMessage = _localizer["Unexpected error when trying to set phone number."];
                     return RedirectToPage();
                 }
             }
-            bool haveToUpdate = false;
-            if (Input.FirstName != user.FirstName)
-            {
-                user.FirstName = Input.FirstName;
-                haveToUpdate = true;
-            }
-            if (Input.LastName != user.LastName)
-            {
-                user.LastName = Input.LastName;
-                haveToUpdate = true;
-            }
-            if (Input.LanguageId != user.LanguageId)
-            {
-                user.LanguageId = Input.LanguageId;
-                haveToUpdate = true;
 
-                // verwijder de gebruiker uit de actieve SessionUser-lijst
-                GroupSpace2022User gUser = Globals.GetUser(user.UserName);
-                gUser.LanguageId = Input.LanguageId;
-                gUser.Language = Language.LanguagesDictionary[Input.LanguageId];
+            GroupSpace2022User _user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            bool userChanged = false;
+            if (Input.FirstName != _user.FirstName)
+            {
+                _user.FirstName = Input.FirstName;
+                userChanged = true;
+            }
 
-                // Update the language/culture
+            if (Input.LastName != _user.LastName)
+            {
+                _user.LastName = Input.LastName;
+                userChanged = true;
+            }
+
+            if (Input.LanguageId != _user.LanguageId)
+            {
+                _user.LanguageId = Input.LanguageId;
+                userChanged = true;
+                string culture = Thread.CurrentThread.CurrentCulture.ToString();
+                try
+                {
+                    culture = Input.LanguageId + culture.Substring(2, 3);
+                }
+                catch
+                {
+                    culture = Input.LanguageId + "-BE";
+                }
+
+                // Added to make sure that the statusmessage would be in the new language
+                Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
+
+                // Added to make sure that the new culture is communicated by the cookies
                 Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
-                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(Input.LanguageId)),
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                     new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
 
             }
-            if (haveToUpdate)
-                await _userManager.UpdateAsync(user);
-            
-            // zorg dat de actieve gebruiker geupdated wordt
-            // Globals.ReloadUser(user.UserName, dbContext)
 
+            if (userChanged)
+            {
+                _context.Update(_user);
+                _context.SaveChanges();
+                Globals.ReloadUser(_user.UserName, _context);
+            }
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = _localizer["Your profile has been updated"];
             return RedirectToPage();
         }
     }
