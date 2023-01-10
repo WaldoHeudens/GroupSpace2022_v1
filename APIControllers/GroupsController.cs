@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using GroupSpace2022.Data;
 using GroupSpace2022.Models;
 using GroupSpace2022.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GroupSpace2022.APIControllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class GroupsController : ControllerBase
     {
@@ -43,15 +45,21 @@ namespace GroupSpace2022.APIControllers
             return @group;
         }
 
-        [HttpGet]
-        public  List<Group> GetUserGroup()
+        [HttpGet()]
+        [Route("UserGroups/{userName}")]
+        [Route("/UserGroups/{userName}")]
+        public  List<Group> GetUserGroups(string userName)
         {
-            GroupSpace2022User _user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            GroupSpace2022User _user = _context.Users.FirstOrDefault(u => u.UserName == userName);
+            if (_user == null)
+                return null;
             List < UserGroup > usergroups = _context.UserGroup.Where(u => u.UserId == _user.Id).ToList();
             List<Group> groups = new List<Group>();
             foreach (UserGroup ug in usergroups)
             {
-                groups.Add(_context.Group.FirstOrDefault(u => ug.GroupId == ug.GroupId));
+                Group temp = _context.Group.FirstOrDefault(u => u.Id == ug.GroupId);
+                temp.UserGroups = null;
+                groups.Add(temp);
             }
             return groups;
         }
