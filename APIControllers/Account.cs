@@ -36,14 +36,14 @@ namespace GroupSpace2022.APIControllers
         [HttpPost]
         [Route("/API/Login")]
         [Route("Login")]
-        public async Task<ActionResult<LoginModel>> Login([FromBody]LoginModel @login)
+        public async Task<ActionResult<Boolean>> Login([FromBody]LoginModel @login)
         {
             var result = await _signInManager.PasswordSignInAsync(@login.UserName, @login.Password, false, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                return login;
+                return true;
             }
-            return null;
+            return false;
         }
 
     }
