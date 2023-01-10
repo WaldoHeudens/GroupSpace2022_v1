@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace GroupSpace2022.APIControllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize]                 // We kunnen deze alleen aanspreken als we aangemeld zijn
     [ApiController]
     public class GroupsController : ControllerBase
     {
@@ -48,8 +48,11 @@ namespace GroupSpace2022.APIControllers
         [HttpGet()]
         [Route("UserGroups/{userName}")]
         [Route("/UserGroups/{userName}")]
-        public  List<Group> GetUserGroups(string userName)
+        public  List<Group> GetUserGroups(string? userName)
         {
+            if (userName == null)
+                userName = User.Identity.Name;
+
             GroupSpace2022User _user = _context.Users.FirstOrDefault(u => u.UserName == userName);
             if (_user == null)
                 return null;

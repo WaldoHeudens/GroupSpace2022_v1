@@ -27,6 +27,9 @@ namespace GroupSpace2022.APIControllers
             _signInManager = signInManager;
         }
 
+        // Dit is een eenvoudige login-methode gebruikmakend van de bestaande Identity-structuur
+        // Hiervoor hebben we nodig:  Een login-model (deze zit in APIModels)
+
 
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -38,7 +41,7 @@ namespace GroupSpace2022.APIControllers
             var result = await _signInManager.PasswordSignInAsync(@login.UserName, @login.Password, false, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                return login
+                return login;
             }
             return null;
         }
