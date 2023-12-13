@@ -39,4 +39,6 @@ public class GroupSpace2022Context : IdentityDbContext<GroupSpace2022User>
 
     public DbSet<GroupSpace2022.Models.Language> Language { get; set; }
 
+    public DbSet<GroupSpace2022.Models.Parameter> Parameters { get; set; }
+
 }

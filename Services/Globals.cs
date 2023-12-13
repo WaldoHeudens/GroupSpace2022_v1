@@ -1,12 +1,22 @@
 ﻿using GroupSpace2022.Areas.Identity.Data;
 using GroupSpace2022.Data;
+using GroupSpace2022.Models;
+using MailKit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NETCore.MailKit.Infrastructure.Internal;
+using SQLitePCL;
 
 namespace GroupSpace2022.Services
 {
     public class Globals
     {
         // Global systemparameters
+        static Dictionary<string, string> Parameters { get; set; }
+        static public WebApplication App { get; set; }
+
 
 
         // User management and userstatistics
@@ -111,6 +121,45 @@ namespace GroupSpace2022.Services
             int count = UserDictionary[userName].Count;
             UserDictionary.Remove(userName);
             AddUser(userName, dbContext, count);
+        }
+
+        public static void InitializeParameters(GroupSpace2022Context context)
+        {
+            Parameters = new Dictionary<string, string>();
+            List<Parameter> parameters = context.Parameters.ToList();
+            foreach(Parameter p in parameters)
+            {
+                Parameters[p.Name] = p.Value;
+            }
+            ConfigureEmail();
+
+        }
+
+        public static string GetParameter(string name)
+        {
+            return Parameters[name];
+        }
+
+        public static void EditParameter(string name, string value, string destination)
+        {
+            Parameters[name] = value;
+
+            if (destination == "Mail")
+                ConfigureEmail();
+        }
+
+        static void ConfigureEmail()
+        {
+
+            MailKitEmailSender mailsender = (MailKitEmailSender) App.Services.GetService<IEmailSender>();
+            var options = mailsender.Options;
+            options.Server = Parameters["Mail.Server"];
+            options.Port = Convert.ToInt16(Parameters["Mail.Port"]);
+            options.Account = Parameters["Mail.Account"];
+            options.Password = Parameters["Mail.Password"];
+            options.SenderEmail = Parameters["Mail.SenderEmail"];
+            options.SenderName = Parameters["Mail.SenderName"];
+            options.Security = Convert.ToBoolean(Parameters["Mail.Security"]);
         }
     }
 }

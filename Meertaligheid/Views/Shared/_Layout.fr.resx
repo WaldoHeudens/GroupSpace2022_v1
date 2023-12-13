@@ -138,6 +138,9 @@
   <data name="Mediabeheer" xml:space="preserve">
     <value>Gérer média</value>
   </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>Paramètres de système</value>
+  </data>
   <data name="Systeem" xml:space="preserve">
     <value>Système</value>
   </data>

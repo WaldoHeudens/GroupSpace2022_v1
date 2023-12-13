@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 var builder = WebApplication.CreateBuilder(args);
 
 // Manueel toegevoegd om te werken met verschillende databases in Identity Framework
-var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_EHB_SQLServer");
-//var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
+var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context_SQLServer");
 //var connectionString = builder.Configuration.GetConnectionString("GroupSpace2022Context-LocalDB");
 
 builder.Services.AddDbContext<GroupSpace2022Context>(options =>
@@ -39,6 +38,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
+
+// De volgende configuratie gebruiken we niet meer, maar zit er nog steeds als voorbeeld in.
+// De eigenlijke implementatie gebeurd d.m.v. de parameters:  Zie Globals!
 builder.Services.Configure<MailKitOptions>(options =>
 {
     options.Server = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"];
@@ -49,7 +51,7 @@ builder.Services.Configure<MailKitOptions>(options =>
     options.SenderName = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
 
     // Set it to TRUE to enable ssl or tls, FALSE otherwise
-    options.Security = false;  // true zet ssl or tls aan
+    options.Security = true;  // true zet ssl or tls aan
 });
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -86,7 +88,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-
+Globals.App = app;
 
 
 // Configure the HTTP request pipeline.

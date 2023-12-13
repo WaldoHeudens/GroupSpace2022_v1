@@ -1,0 +1,49 @@
+﻿@model GroupSpace2022.Models.Parameter
+
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = localizer["edit"];
+}
+
+<h1>@localizer["Edit"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Added"/>
+            <input type="hidden" asp-for="Destination" />
+            <input type="hidden" asp-for="OutOfUse" />
+            <input type="hidden" asp-for="Name" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="form-control" >@Model.Name</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Value" class="control-label"></label>
+                <input asp-for="Value" class="form-control" />
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" rows="5" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">@localizer["Terug naar overzicht"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -4,6 +4,7 @@ using GroupSpace2022.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupSpace2022.Migrations
 {
     [DbContext(typeof(GroupSpace2022Context))]
-    partial class GroupSpace2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20231212155646_Parameters")]
+    partial class Parameters
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,10 +344,6 @@ namespace GroupSpace2022.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Destination")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("OutOfUse")
                         .HasColumnType("datetime2");
 
@@ -355,7 +353,7 @@ namespace GroupSpace2022.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Parameters");
+                    b.ToTable("Parameter");
                 });
 
             modelBuilder.Entity("GroupSpace2022.Models.Token", b =>

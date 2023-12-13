@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using GroupSpace2022.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using GroupSpace2022.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace GroupSpace2022.Data
 {
@@ -15,6 +16,25 @@ namespace GroupSpace2022.Data
             {
                 context.Database.EnsureCreated();   // Zorg dat de databank bestaat
                 context.Database.Migrate();
+
+                // Beheer van de systeemparameters
+                if (!context.Parameters.Any())
+                {
+                    context.Parameters.AddRange(
+                        new Parameter { Name = "Version", Value = "0.3.0", Description = "Huidige versie van GroupSpace2022", Destination = "System" },
+                        new Parameter { Name = "Mail.Server", Value = "ergens.groupspace.be", Description="Naam van de gebruikte pop-server", Destination = "Mail" },
+                        new Parameter { Name = "Mail.Port", Value = "25", Description = "Poort van de smtp-server", Destination = "Mail" },
+                        new Parameter { Name = "Mail.Account", Value = "SmtpServer", Description = "Acount-naam van de smtp-server", Destination = "Mail" },
+                        new Parameter { Name = "Mail.Password", Value = "xxxyyy!2315", Description = "Wachtwoord van de smtp-server", Destination = "Mail" },
+                        new Parameter { Name = "Mail.Security", Value = "true", Description = "Is SSL or TLS encryption used (true or false)", Destination = "Mail" },
+                        new Parameter { Name = "Mail.SenderEmail", Value = "administrator.groupspace.be", Description = "E-mail van de smtp-verzender", Destination = "Mail" },
+                        new Parameter { Name = "Mail.SenderName", Value = "Administrator", Description = "Naam van de smtp-verzender", Destination = "Mail" }
+                    );
+                    context.SaveChanges();
+                }
+
+                // Haal de lijst van parameters op
+                Globals.InitializeParameters(context);
 
                 // Initialisatie van de talen
                 if (!context.Language.Any())

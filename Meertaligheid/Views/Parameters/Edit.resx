@@ -117,37 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Beheren groepen" xml:space="preserve">
-    <value>Groepen</value>
+  <data name="Edit" xml:space="preserve">
+    <value>Wijzig parameter</value>
   </data>
-  <data name="Boodschappen" xml:space="preserve">
-    <value>Boodschappen</value>
-  </data>
-  <data name="Categorieën" xml:space="preserve">
-    <value>Categorieën</value>
-  </data>
-  <data name="Gebruiker" xml:space="preserve">
-    <value>Gebruikers</value>
-  </data>
-  <data name="Groep maken" xml:space="preserve">
-    <value>Nieuwe Groep</value>
-  </data>
-  <data name="Media" xml:space="preserve">
-    <value>Media</value>
-  </data>
-  <data name="Mediabeheer" xml:space="preserve">
-    <value>Mediabeheer</value>
-  </data>
-  <data name="Parameters" xml:space="preserve">
-    <value>Systeemparameters</value>
-  </data>
-  <data name="Systeem" xml:space="preserve">
-    <value>Systeem</value>
-  </data>
-  <data name="Talen" xml:space="preserve">
-    <value>Talen</value>
-  </data>
-  <data name="Types" xml:space="preserve">
-    <value>Types</value>
+  <data name="Terug naar overzicht" xml:space="preserve">
+    <value>Terug naar overzicht</value>
   </data>
 </root>

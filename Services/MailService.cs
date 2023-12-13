@@ -1,5 +1,6 @@
 ﻿    using MailKit.Net.Smtp;
-    using Microsoft.AspNetCore.Identity.UI.Services;
+using MailKit.Security;
+using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.Extensions.Options;
     using MimeKit;
     using MimeKit.Text;
@@ -36,6 +37,16 @@
                 // send email
                 using (var smtp = new SmtpClient())
                 {
+                    // Toegevoegd voor het gebruik van StartTls !
+                    SecureSocketOptions Security = SecureSocketOptions.None;
+                    if (Options.Security)
+                    {
+                        if (Options.Port == 587)
+                            Security = SecureSocketOptions.StartTls;
+                        else
+                            Security = SecureSocketOptions.SslOnConnect;
+                    }
+
                     smtp.Connect(Options.Server, Options.Port, Options.Security);
                     smtp.Authenticate(Options.Account, Options.Password);
                     smtp.Send(email);
