@@ -87,6 +87,10 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "GroupSpace2022", Version = "v1" });
 });
 
+// Registreer onze IMyUser service voor de customized dependency injection
+builder.Services.AddTransient<IMyUser, MyUser>();
+
+
 var app = builder.Build();
 Globals.App = app;
 

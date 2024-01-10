@@ -1,16 +1,49 @@
-﻿using GroupSpace2022.Areas.Identity.Data;
+﻿//using AspNetCore;
+using GroupSpace2022.Areas.Identity.Data;
 using GroupSpace2022.Data;
 using GroupSpace2022.Models;
 using MailKit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NETCore.MailKit.Infrastructure.Internal;
 using SQLitePCL;
+using System.Net.Http;
 
 namespace GroupSpace2022.Services
 {
+    // Interface and class for (dependency injection of MyUser 
+    public interface IMyUser
+    {        
+        public GroupSpace2022User AppUser();
+
+    }
+
+    public class MyUser : IMyUser
+    {
+        private readonly IHttpContextAccessor _httpContext;
+
+        public MyUser(IHttpContextAccessor httpContext)
+        {
+            _httpContext = httpContext;
+        }
+
+        public GroupSpace2022User AppUser()
+        {
+            return Globals.GetUser(_httpContext.HttpContext.User.Identity.Name);
+        }
+
+        //public void AssignUser(GroupSpace2022User user)
+        //{
+        //    user = _user;
+        //}
+    }
+    
+
+
+
     public class Globals
     {
         // Global systemparameters
@@ -31,19 +64,22 @@ namespace GroupSpace2022.Services
 
 
         readonly RequestDelegate _next; // verwijzing naar volgende middelware methode
+        readonly IMyUser _myUser; // verwijzing naar de custom dependency MyUser
+
         static Dictionary<string, UserStatistics> UserDictionary = new Dictionary<string, UserStatistics>(); 
 
 
         // Middleware constructor
-        public Globals(RequestDelegate next)
+        public Globals(RequestDelegate next, IMyUser myUser)
         {
             _next = next;
+            _myUser = myUser;
             CleanUpTimer = new Timer(CleanUp, null, 21600000, 21600000);
         }
 
 
         // Middleware task
-        public async Task Invoke(HttpContext httpContext, GroupSpace2022Context dbContext)
+        public async Task Invoke(HttpContext httpContext, GroupSpace2022Context dbContext, IMyUser myUser)
         {
             // Haal de gebruikersnaam op
             string name = httpContext.User.Identity.Name == null ? "dummy" : httpContext.User.Identity.Name;
